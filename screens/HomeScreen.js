@@ -1,23 +1,62 @@
 import React from 'react';
 import {
   Image,
-  Platform,
   ScrollView,
+  Dimensions,
   StyleSheet,
   Text,
   View,
 } from 'react-native';
-import { WebBrowser } from 'expo';
+import { MapView } from 'expo';
+
 
 export default class HomeScreen extends React.Component {
   static navigationOptions = {
     header: null,
   };
 
+  constructor(props) {
+    super(props);
+  }
+  state = {
+    mapRegion: {
+      latitude: 50.0686919,
+      longitude: 19.9433782,
+      latitudeDelta: 0.0922,
+      longitudeDelta: 0.0421,
+    },
+    markers: [{
+      title: 'hello',
+      description: 'hhh',
+      latlng: {
+        latitude: 50.0686919,
+        longitude: 19.9433782
+      },
+    }]
+  };
+
+  _handleMapRegionChange = mapRegion => {
+    this.setState({ mapRegion });
+  };
+
+  _handlePress = press => {
+    this.state.markers.push(
+      {
+        title: 'hello',
+        description: 'hhh',
+        latlng: {
+          latitude: press.nativeEvent.coordinate.latitude,
+          longitude: press.nativeEvent.coordinate.longitude
+        },
+      });
+  };
+
   render() {
     return (
       <View style={styles.container}>
-        <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
+        <ScrollView
+          style={styles.container}
+          contentContainerStyle={styles.contentContainer}>
           <View style={styles.welcomeContainer}>
             <Image
               source={
@@ -27,16 +66,28 @@ export default class HomeScreen extends React.Component {
               }
               style={styles.welcomeImage}
             />
-          </View>
-
-          <View style={styles.getStartedContainer}>
             {this._developmentModeWarning()}
-
-
-      			<Text style={styles.getStartedText}>
-      			   Welcome to HomePage
-            </Text>
           </View>
+
+          <View style={styles.mapContainer}>
+            <MapView
+              style={{ alignSelf: 'stretch', height: 300, width: Dimensions.get('window').width, flex: 1 }}
+              region={this.state.mapRegion}
+              onRegionChange={this._handleMapRegionChange}
+              onPress={this._handlePress}
+            >
+            {this.state.markers.map(function(marker, i){
+                return <MapView.Marker draggable
+                  key={i}
+                  coordinate={marker.latlng}
+                  onDragEnd={(e) => { marker.latlng = e.nativeEvent.coordinate }}
+                  title={marker.title}
+                  description={marker.description}
+                />
+              })}
+            </MapView>
+          </View>
+
         </ScrollView>
       </View>
     );
@@ -87,22 +138,8 @@ const styles = StyleSheet.create({
     marginTop: 3,
     marginLeft: -10,
   },
-  getStartedContainer: {
+  mapContainer: {
     alignItems: 'center',
-    marginHorizontal: 50,
-  },
-  getStartedText: {
-    fontSize: 17,
-    color: 'rgba(96,100,109, 1)',
-    lineHeight: 24,
-    textAlign: 'center',
-  },
-  tabBarInfoText: {
-    fontSize: 17,
-    color: 'rgba(96,100,109, 1)',
-    textAlign: 'center',
-  },
-  navigationFilename: {
-    marginTop: 5,
+    marginHorizontal: 5,
   },
 });
