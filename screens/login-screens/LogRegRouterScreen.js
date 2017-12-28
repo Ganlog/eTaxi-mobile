@@ -7,15 +7,23 @@ export default class LoginScreen extends React.Component {
     title: 'Login or register',
   };
 
+
   constructor(props) {
     super(props);
   }
 
 
-
   componentDidMount() {
 
   }
+
+
+
+
+
+
+
+
 
   render() {
     return (
@@ -36,6 +44,14 @@ export default class LoginScreen extends React.Component {
     );
   }
 }
+
+
+
+
+
+
+
+
 
 const styles = StyleSheet.create({
 

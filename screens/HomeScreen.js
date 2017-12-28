@@ -51,6 +51,33 @@ export default class HomeScreen extends React.Component {
       });
   };
 
+
+  _developmentModeWarning() {
+    if (__DEV__) {
+      return (
+        <Text style={styles.developmentModeText}>
+          Development mode is enabled, your app will be slower but you can use useful development
+          tools. Shake your phone to enable them (for example element inspector).
+        </Text>
+      );
+    } else {
+      return (
+        <Text style={styles.developmentModeText}>
+          You are not in development mode, your app will run at full speed.
+        </Text>
+      );
+    }
+  }
+}
+
+
+
+
+
+
+
+
+
   render() {
     return (
       <View style={styles.container}>
@@ -93,23 +120,13 @@ export default class HomeScreen extends React.Component {
     );
   }
 
-  _developmentModeWarning() {
-    if (__DEV__) {
-      return (
-        <Text style={styles.developmentModeText}>
-          Development mode is enabled, your app will be slower but you can use useful development
-          tools. Shake your phone to enable them (for example element inspector).
-        </Text>
-      );
-    } else {
-      return (
-        <Text style={styles.developmentModeText}>
-          You are not in development mode, your app will run at full speed.
-        </Text>
-      );
-    }
-  }
-}
+
+
+
+
+
+
+
 
 const styles = StyleSheet.create({
   container: {

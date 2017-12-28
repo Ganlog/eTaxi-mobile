@@ -7,7 +7,7 @@ import Colors from '../constants/Colors';
 
 import HomeScreen from '../screens/HomeScreen';
 import AboutScreen from '../screens/AboutScreen';
-import LoginScreensNavigator from '../screens/login-screens/index';
+import LoginScreensNavigator from './LoginScreensNavigator';
 
 export default TabNavigator(
   {

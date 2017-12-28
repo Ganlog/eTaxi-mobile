@@ -7,6 +7,7 @@ export default class LoginScreen extends React.Component {
     title: 'Login to your account',
   };
 
+
   constructor(props) {
     super(props);
     this.focusNextField = this.focusNextField.bind(this);
@@ -20,9 +21,11 @@ export default class LoginScreen extends React.Component {
     }
   }
 
+
   focusNextField(id) {
     this.inputs[id].focus();
   }
+
 
   login(username, password) {
     this.setState({ isLoading: false });
@@ -45,6 +48,12 @@ export default class LoginScreen extends React.Component {
       console.error(error);
     });
   };
+
+
+
+
+
+
 
 
 
@@ -94,6 +103,14 @@ export default class LoginScreen extends React.Component {
     );
   }
 }
+
+
+
+
+
+
+
+
 
 const styles = StyleSheet.create({
   container: {

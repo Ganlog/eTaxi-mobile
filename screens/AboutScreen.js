@@ -6,6 +6,14 @@ export default class AboutScreen extends React.Component {
     title: 'About',
   };
 
+
+
+
+
+
+
+
+
   render() {
     return (
       <View style={styles.container}>
@@ -22,6 +30,14 @@ export default class AboutScreen extends React.Component {
     );
   }
 }
+
+
+
+
+
+
+
+
 
 const styles = StyleSheet.create({
   container: {

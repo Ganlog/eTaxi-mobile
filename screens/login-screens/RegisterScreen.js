@@ -7,6 +7,7 @@ export default class RegisterScreen extends React.Component {
     title: 'Register your account',
   };
 
+
   constructor(props) {
     super(props);
     this.focusNextField = this.focusNextField.bind(this);
@@ -20,9 +21,11 @@ export default class RegisterScreen extends React.Component {
     }
   }
 
+
   focusNextField(id) {
     this.inputs[id].focus();
   }
+
 
   register(username, email, password, matchingPassword) {
     this.setState({ isLoading: false });
@@ -64,6 +67,12 @@ export default class RegisterScreen extends React.Component {
       console.error(error);
     });
   };
+
+
+
+
+
+
 
 
 
@@ -131,12 +140,18 @@ export default class RegisterScreen extends React.Component {
             renderRow={(rowData) => <Text>{rowData}</Text>}
           />
         )}
-
-
       </View>
     );
   }
 }
+
+
+
+
+
+
+
+
 
 const styles = StyleSheet.create({
   container: {

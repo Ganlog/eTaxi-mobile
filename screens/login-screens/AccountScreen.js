@@ -7,6 +7,7 @@ export default class AccountScreen extends React.Component {
     title: 'User Account',
   };
 
+
   constructor(props) {
     super(props);
     this.state = {
@@ -17,6 +18,14 @@ export default class AccountScreen extends React.Component {
       matchingPassword: ''
     }
   }
+
+
+
+
+
+
+
+
 
   render() {
     return (
@@ -44,6 +53,13 @@ export default class AccountScreen extends React.Component {
     );
   }
 }
+
+
+
+
+
+
+
 
 const styles = StyleSheet.create({
   container: {
