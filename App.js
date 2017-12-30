@@ -3,6 +3,7 @@ import { Platform, StatusBar, StyleSheet, View } from 'react-native';
 import { AppLoading, Asset, Font } from 'expo';
 import { Ionicons } from '@expo/vector-icons';
 import RootNavigation from './navigation/RootNavigation';
+import UserInfo from './global/UserInfo';
 
 export default class App extends React.Component {
   state = {
@@ -30,6 +31,8 @@ export default class App extends React.Component {
   }
 
   _loadResourcesAsync = async () => {
+    UserInfo.getParamsOnLoad();
+
     return Promise.all([
       Asset.loadAsync([
         require('./assets/images/dev.png'),

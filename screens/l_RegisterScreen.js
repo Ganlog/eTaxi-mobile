@@ -1,6 +1,8 @@
 import React from 'react';
 import { Keyboard, ActivityIndicator, ScrollView, Button, StyleSheet, ListView, Text, TextInput, View } from 'react-native';
-import Colors from '../../constants/Colors';
+import Colors from '../constants/Colors';
+import UserInfo from '../global/UserInfo';
+import ScreenNavigation from '../global/ScreenNavigation';
 
 export default class RegisterScreen extends React.Component {
   static navigationOptions = {
@@ -13,7 +15,10 @@ export default class RegisterScreen extends React.Component {
     this.focusNextField = this.focusNextField.bind(this);
     this.inputs = {};
     this.state = {
-      isLoading: true,
+      isLoading: false,
+      response: '',
+      regTokenReceived: null,
+      registerSuccess: false,
       username: '',
       email: '',
       password: '',
@@ -27,9 +32,9 @@ export default class RegisterScreen extends React.Component {
   }
 
 
-  register(username, email, password, matchingPassword) {
-    this.setState({ isLoading: false });
-    return fetch('http://85.255.11.29:8080//api/v1/users/register', {
+  _register(username, email, password, matchingPassword) {
+    this.setState({ isLoading: true})
+    return fetch('http://85.255.11.29:8080/api/v1/users/register', {
       method: 'POST',
       headers: {
         Accept: 'application/json', 'Content-Type': 'application/json',
@@ -43,23 +48,17 @@ export default class RegisterScreen extends React.Component {
     })
     .then((response) => response.json())
     .then((responseJson) => {
-      console.log(responseJson);
       if(responseJson.errors){
-        let ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
         this.setState({
+          response: <Text style={{ color: 'red' }}>{responseJson.errors}</Text>,
           isLoading: false,
-          dataSource: ds.cloneWithRows(responseJson.errors),
-        }, function() {
-          // do something with new state
         });
       }
       else if(responseJson.message) {
-        let ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
         this.setState({
+          response: responseJson.message,
+          regTokenReceived: responseJson.object,
           isLoading: false,
-          dataSource: ds.cloneWithRows(responseJson.message),
-        }, function() {
-          // do something with new state
         });
       }
     })
@@ -69,7 +68,56 @@ export default class RegisterScreen extends React.Component {
   };
 
 
+  _confirmRegistration(){
+    this.setState({ isLoading: true})
+    return fetch('http://85.255.11.29:8080/api/v1/users/registrationConfirm/'+this.state.regTokenReceived, {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json', 'Content-Type': 'application/json',
+      },
+    })
+    .then((response) => response.json())
+    .then((responseJson) => {
+      if(responseJson.errors){
+        this.setState({
+          response: <Text style={{ color: 'red' }}>{responseJson.errors}</Text>,
+          isLoading: false,
+        });
+      }
+      else if(responseJson.message) {
+        UserInfo.storeParam('username', this.state.username);
+        UserInfo.storeParam('email', this.state.email);
+        this.setState({
+          response: responseJson.message,
+          isLoading: false,
+          registerSuccess: true
+        });
+      }
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+  };
 
+
+  _openApplication(){
+    this.inputs['UsernameInput'].clear();
+    this.inputs['EmailInput'].clear();
+    this.inputs['PasswordInput'].clear();
+    this.inputs['MatchPassInput'].clear();
+
+    this.setState({
+      response: '',
+      regTokenReceived: null,
+      registerSuccess: false,
+      username: '',
+      email: '',
+      password: '',
+      matchingPassword: '',
+    });
+
+    ScreenNavigation.goto('HomeScreen');
+  }
 
 
 
@@ -125,21 +173,37 @@ export default class RegisterScreen extends React.Component {
           onSubmitEditing={Keyboard.dismiss}
         />
         <Button
-          onPress={() => this.register(this.state.username, this.state.email, this.state.password, this.state.matchingPassword)}
+          onPress={() => this._register(this.state.username, this.state.email, this.state.password, this.state.matchingPassword)}
           title="Register"
           color={Colors.tintColor}
-          accessibilityLabel="Register"
         />
 
 
         {this.state.isLoading ? (
           <ActivityIndicator/>
         ) : (
-          <ListView
-            dataSource={this.state.dataSource}
-            renderRow={(rowData) => <Text>{rowData}</Text>}
-          />
+          <Text>{this.state.response}</Text>
         )}
+
+
+        {this.state.regTokenReceived ? (
+          <Button
+            onPress={() => this._confirmRegistration()}
+            title="Confirm registration"
+            color={Colors.tintColor}
+          />
+        ) : ( null )}
+
+        {this.state.registerSuccess ? (
+          <View>
+            <View style={{margin: 5}} />
+            <Button
+              onPress={() => this._openApplication()}
+              title="Open Application"
+              color={Colors.tintColor}
+            />
+          </View>
+        ) : ( null )}
       </View>
     );
   }
@@ -154,11 +218,6 @@ export default class RegisterScreen extends React.Component {
 
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingTop: 15,
-    backgroundColor: '#fff',
-  },
   input: {
     marginLeft: 15,
     marginRight: 15,

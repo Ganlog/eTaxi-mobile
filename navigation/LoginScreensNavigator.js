@@ -1,24 +1,25 @@
 import React, { Component } from "react";
-import AccountScreen from "../screens/login-screens/AccountScreen";
-import LogRegRouterScreen from "../screens/login-screens/LogRegRouterScreen";
-import LoginScreen from "../screens/login-screens/LoginScreen";
-import RegisterScreen from "../screens/login-screens/RegisterScreen";
+import HomeScreen from "../screens/HomeScreen";
+import l_ChoiceScreen from "../screens/l_ChoiceScreen";
+import l_LoginScreen from "../screens/l_LoginScreen";
+import l_RegisterScreen from "../screens/l_RegisterScreen";
 import { TabNavigator } from "react-navigation";
+
 export default (LoginScreensNavigator = TabNavigator(
   {
-    AccountScreen: {
-      screen: AccountScreen
+    HomeScreen: {
+      screen: HomeScreen,
     },
-    LogRegRouterScreen: {
-      screen: LogRegRouterScreen,
+    l_ChoiceScreen: {
+      screen: l_ChoiceScreen,
       navigationOptions: ({ navigation }) => ({ tabBarVisible: false })
     },
-    LoginScreen: {
-      screen: LoginScreen,
+    l_LoginScreen: {
+      screen: l_LoginScreen,
       navigationOptions: ({ navigation }) => ({ tabBarVisible: false })
     },
-    RegisterScreen: {
-      screen: RegisterScreen,
+    l_RegisterScreen: {
+      screen: l_RegisterScreen,
       navigationOptions: ({ navigation }) => ({ tabBarVisible: false })
     },
   },

@@ -1,6 +1,8 @@
 import React from 'react';
-import { Keyboard, ActivityIndicator, ScrollView, Button, StyleSheet, ListView, Text, TextInput, View } from 'react-native';
-import Colors from '../../constants/Colors';
+import { Keyboard, ActivityIndicator, ScrollView, Button, StyleSheet, ListView, Text, TextInput, View, AsyncStorage } from 'react-native';
+import Colors from '../constants/Colors';
+import ScreenNavigation from '../global/ScreenNavigation';
+import { NavigationActions } from 'react-navigation';
 
 export default class LoginScreen extends React.Component {
   static navigationOptions = {
@@ -10,12 +12,7 @@ export default class LoginScreen extends React.Component {
 
   constructor(props) {
     super(props);
-  }
-
-
-  componentDidMount() {
-
-  }
+  };
 
 
 
@@ -29,16 +26,15 @@ export default class LoginScreen extends React.Component {
     return (
       <View style={{flex: 1, paddingTop: 20}}>
         <Button
-          onPress={() => this.props.navigation.navigate('LoginScreen')}
+          onPress={() => ScreenNavigation.goto('l_LoginScreen')}
           title="Log in"
           color={Colors.tintColor}
-          accessibilityLabel="Log in"
         />
+        <View style={{margin: 5}} />
         <Button
-          onPress={() => this.props.navigation.navigate('RegisterScreen')}
+          onPress={() => ScreenNavigation.goto('l_RegisterScreen')}
           title="Register"
           color={Colors.tintColor}
-          accessibilityLabel="Register"
         />
       </View>
     );

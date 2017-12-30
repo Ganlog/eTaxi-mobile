@@ -1,6 +1,8 @@
 import React from 'react';
 import { Keyboard, ActivityIndicator, ScrollView, Button, StyleSheet, ListView, Text, TextInput, View } from 'react-native';
-import Colors from '../../constants/Colors';
+import Colors from '../constants/Colors';
+import UserInfo from '../global/UserInfo';
+import ScreenNavigation from '../global/ScreenNavigation';
 
 export default class LoginScreen extends React.Component {
   static navigationOptions = {
@@ -13,11 +15,10 @@ export default class LoginScreen extends React.Component {
     this.focusNextField = this.focusNextField.bind(this);
     this.inputs = {};
     this.state = {
-      isLoading: true,
+      isLoading: false,
+      response: '',
       username: '',
-      email: '',
       password: '',
-      matchingPassword: ''
     }
   }
 
@@ -27,22 +28,52 @@ export default class LoginScreen extends React.Component {
   }
 
 
-  login(username, password) {
-    this.setState({ isLoading: false });
-    return fetch('http://85.255.11.29:8080//oauth/token', {
+  _login(username, password) {
+    this.setState({ isLoading: true });
+    var details = {
+      grant_type: "password",
+      username: username,
+      password: password,
+    };
+
+    var formBody = [];
+    for (var property in details) {
+      var encodedKey = encodeURIComponent(property);
+      var encodedValue = encodeURIComponent(details[property]);
+      formBody.push(encodedKey + "=" + encodedValue);
+    }
+    formBody = formBody.join("&");
+    fetch('http://85.255.11.29:8080/oauth/token', {
       method: 'POST',
       headers: {
-        Accept: 'application/json', 'Content-Type': 'application/json',
+        'Content-Type': "application/x-www-form-urlencoded;charset=UTF-8",
+        authorization: "Basic ZVRheGlDbGllbnRJZDpzZWNyZXQ="
       },
-      body: JSON.stringify({
-        username: username,
-        password: password,
-      }),
+      body: formBody
     })
     .then((response) => response.json())
     .then((responseJson) => {
-      console.log(responseJson);
+      if(responseJson.error){
+        this.setState({
+          response: <Text style={{ color: 'red' }}>{responseJson.error}</Text>,
+          isLoading: false,
+        });
+      }
+      else if(responseJson.access_token) {
+        UserInfo.storeParam('token', responseJson.access_token);
+        UserInfo.storeParam('username', this.state.username);
 
+        this.inputs['UsernameInput'].clear();
+        this.inputs['PasswordInput'].clear();
+        this.setState({
+          isLoading: false,
+          response: '',
+          username: '',
+          password: '',
+        });
+        
+        ScreenNavigation.goto('HomeScreen');
+      }
     })
     .catch((error) => {
       console.error(error);
@@ -80,23 +111,19 @@ export default class LoginScreen extends React.Component {
           returnKeyType="next"
           secureTextEntry={true}
           blurOnSubmit={false}
-          onSubmitEditing={() => { this.focusNextField('MatchPassInput'); }}
+          onSubmitEditing={Keyboard.dismiss}
         />
         <Button
-          onPress={() => this.login(this.state.username, this.state.email, this.state.password, this.state.matchingPassword)}
+          onPress={() => this._login(this.state.username, this.state.password)}
           title="Login"
           color={Colors.tintColor}
-          accessibilityLabel="Login"
         />
 
 
         {this.state.isLoading ? (
           <ActivityIndicator/>
         ) : (
-          <ListView
-            dataSource={this.state.dataSource}
-            renderRow={(rowData) => <Text>{rowData}</Text>}
-          />
+          <Text>{this.state.response}</Text>
         )}
 
       </View>

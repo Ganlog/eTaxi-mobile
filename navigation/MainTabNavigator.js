@@ -5,24 +5,29 @@ import { TabNavigator, TabBarBottom } from 'react-navigation';
 
 import Colors from '../constants/Colors';
 
-import HomeScreen from '../screens/HomeScreen';
 import AboutScreen from '../screens/AboutScreen';
+import AccountScreen from "../screens/AccountScreen";
 import LoginScreensNavigator from './LoginScreensNavigator';
+
 
 export default TabNavigator(
   {
     Home: {
-      screen: HomeScreen,
+      screen: LoginScreensNavigator,
     },
     About: {
       screen: AboutScreen,
     },
     Account: {
-      screen: LoginScreensNavigator,
+      screen: AccountScreen,
     },
   },
   {
     navigationOptions: ({ navigation }) => ({
+      tabBarOnPress: (scene, jumpToIndex) => {
+        console.log('pressed:', scene.route);
+        jumpToIndex(scene.index);
+      },
       tabBarIcon: ({ focused }) => {
         const { routeName } = navigation.state;
         let iconName;
@@ -34,7 +39,7 @@ export default TabNavigator(
             iconName = Platform.OS === 'ios' ? `ios-information-circle${focused ? '' : '-outline'}` : 'md-information-circle';
             break;
           case 'Account':
-            iconName = Platform.OS === 'ios' ? `ios-person${focused ? '' : '-outline'}` : 'md-person';
+           iconName = Platform.OS === 'ios' ? `ios-person${focused ? '' : '-outline'}` : 'md-person';
         }
         return (
           <Ionicons

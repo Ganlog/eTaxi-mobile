@@ -1,13 +1,8 @@
 import React from 'react';
-import {
-  Image,
-  ScrollView,
-  Dimensions,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import { AsyncStorage, Image, ScrollView, Dimensions, StyleSheet, Text, View, Button, InteractionManager } from 'react-native';
 import { MapView } from 'expo';
+import UserInfo from '../global/UserInfo';
+import ScreenNavigation from '../global/ScreenNavigation';
 
 
 export default class HomeScreen extends React.Component {
@@ -15,9 +10,14 @@ export default class HomeScreen extends React.Component {
     header: null,
   };
 
+
   constructor(props) {
     super(props);
+    ScreenNavigation.setNavigate(this.props.navigation);
+    if(!UserInfo.username)
+      ScreenNavigation.goto('l_ChoiceScreen');
   }
+
   state = {
     mapRegion: {
       latitude: 50.0686919,
@@ -35,9 +35,11 @@ export default class HomeScreen extends React.Component {
     }]
   };
 
+
   _handleMapRegionChange = mapRegion => {
     this.setState({ mapRegion });
   };
+
 
   _handlePress = press => {
     this.state.markers.push(
@@ -67,8 +69,7 @@ export default class HomeScreen extends React.Component {
         </Text>
       );
     }
-  }
-}
+  };
 
 
 
@@ -96,6 +97,7 @@ export default class HomeScreen extends React.Component {
             {this._developmentModeWarning()}
           </View>
 
+
           <View style={styles.mapContainer}>
             <MapView
               style={{ alignSelf: 'stretch', height: 300, width: Dimensions.get('window').width, flex: 1 }}
@@ -119,6 +121,7 @@ export default class HomeScreen extends React.Component {
       </View>
     );
   }
+}
 
 
 

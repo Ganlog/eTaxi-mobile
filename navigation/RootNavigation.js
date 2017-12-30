@@ -1,9 +1,12 @@
 import { Notifications } from 'expo';
 import React from 'react';
-import { StackNavigator } from 'react-navigation';
+import { StackNavigator, NavigationActions } from 'react-navigation';
+import { BackHandler } from 'react-native';
 
 import MainTabNavigator from './MainTabNavigator';
 import registerForPushNotificationsAsync from '../api/registerForPushNotificationsAsync';
+import UserInfo from '../global/UserInfo';
+import ScreenNavigation from '../global/ScreenNavigation';
 
 const RootStackNavigator = StackNavigator(
   {
@@ -20,9 +23,18 @@ const RootStackNavigator = StackNavigator(
   }
 );
 
+
 export default class RootNavigator extends React.Component {
   componentDidMount() {
     this._notificationSubscription = this._registerForPushNotifications();
+    BackHandler.addEventListener('hardwareBackPress', this.onBackPress.bind(this));
+  }
+
+  onBackPress () {
+    if(!UserInfo.username){
+      ScreenNavigation.goto('l_ChoiceScreen');
+      return true;
+    }
   }
 
   componentWillUnmount() {
