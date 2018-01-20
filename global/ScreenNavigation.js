@@ -14,7 +14,7 @@ export default {
     this.state.routeName = navig.state.routeName
   },
 
-  goto: function(screen){
-    this.navigate(screen);
+  goto: function(screen, params = null){
+    this.navigate(screen, params);
   },
 }

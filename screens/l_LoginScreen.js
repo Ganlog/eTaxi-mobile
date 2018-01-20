@@ -2,6 +2,7 @@ import React from 'react';
 import { Keyboard, ActivityIndicator, ScrollView, Button, StyleSheet, ListView, Text, TextInput, View } from 'react-native';
 import Colors from '../constants/Colors';
 import UserInfo from '../global/UserInfo';
+import Encript from '../global/Encript';
 import ScreenNavigation from '../global/ScreenNavigation';
 
 export default class LoginScreen extends React.Component {
@@ -30,29 +31,22 @@ export default class LoginScreen extends React.Component {
 
   _login(username, password) {
     this.setState({ isLoading: true });
-    var details = {
-      grant_type: "password",
-      username: username,
-      password: password,
-    };
 
-    var formBody = [];
-    for (var property in details) {
-      var encodedKey = encodeURIComponent(property);
-      var encodedValue = encodeURIComponent(details[property]);
-      formBody.push(encodedKey + "=" + encodedValue);
-    }
-    formBody = formBody.join("&");
-    fetch('http://85.255.11.29:8080/oauth/token', {
+    const formBody = `username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}&grant_type=password`;
+    console.log(formBody);
+    const hashedCredentials = Encript.btoa(username+':'+password);
+    console.log(hashedCredentials);
+    fetch('http://85.255.11.29:8080/api/v1/login', {
       method: 'POST',
       headers: {
         'Content-Type': "application/x-www-form-urlencoded;charset=UTF-8",
-        authorization: "Basic ZVRheGlDbGllbnRJZDpzZWNyZXQ="
+        Authorization: "Basic ${hashedCredentials}"
       },
       body: formBody
     })
     .then((response) => response.json())
     .then((responseJson) => {
+      UserInfo.storeParam('token', hashedCredentials);
       if(responseJson.error){
         this.setState({
           response: <Text style={{ color: 'red' }}>{responseJson.error}</Text>,
@@ -71,7 +65,7 @@ export default class LoginScreen extends React.Component {
           username: '',
           password: '',
         });
-        
+
         ScreenNavigation.goto('HomeScreen');
       }
     })
@@ -123,7 +117,7 @@ export default class LoginScreen extends React.Component {
         {this.state.isLoading ? (
           <ActivityIndicator/>
         ) : (
-          <Text>{this.state.response}</Text>
+          <Text style={styles.alignCenter}>{this.state.response}</Text>
         )}
 
       </View>
@@ -155,9 +149,6 @@ const styles = StyleSheet.create({
     borderWidth: 1
   },
   alignCenter: {
-    marginTop: 20,
-    fontSize: 20,
-    lineHeight: 20,
     textAlign: 'center',
   },
 });

@@ -32,8 +32,14 @@ export default class LoginScreen extends React.Component {
         />
         <View style={{margin: 5}} />
         <Button
-          onPress={() => ScreenNavigation.goto('l_RegisterScreen')}
-          title="Register"
+          onPress={() => ScreenNavigation.goto('l_RegisterScreen', {userType: "user"})}
+          title="Register as user"
+          color={Colors.tintColor}
+        />
+        <View style={{margin: 5}} />
+        <Button
+          onPress={() => ScreenNavigation.goto('l_RegisterScreen', {userType: "driver"})}
+          title="Register as driver"
           color={Colors.tintColor}
         />
       </View>

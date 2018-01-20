@@ -5,7 +5,7 @@ import l_LoginScreen from "../screens/l_LoginScreen";
 import l_RegisterScreen from "../screens/l_RegisterScreen";
 import { TabNavigator } from "react-navigation";
 
-export default (LoginScreensNavigator = TabNavigator(
+export default LoginScreensNavigator = TabNavigator(
   {
     HomeScreen: {
       screen: HomeScreen,
@@ -31,4 +31,4 @@ export default (LoginScreensNavigator = TabNavigator(
     },
     swipeEnabled: false,
   }
-));
+);

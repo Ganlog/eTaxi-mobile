@@ -13,7 +13,7 @@ export default class AccountScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      rand: 'kk',
+      rand: null,
     }
   }
 
@@ -42,10 +42,25 @@ _refreshView() {
             color={Colors.tintColor}
         />
         <Text style={styles.titleText}>
-          Your account Details:
+          Your {this.state.userType} account Details:
         </Text>
-        <Text>Username: {UserInfo.username}</Text>
-        <Text>Email: {UserInfo.email}</Text>
+
+        <Text> Username: {UserInfo.username}</Text>
+        <Text> FirstName: {UserInfo.firstName}</Text>
+        <Text> LastName: {UserInfo.lastName}</Text>
+        <Text> Email: {UserInfo.email}</Text>
+
+        {(UserInfo.userType == 'driver') ? (
+          <View>
+            <Text> PricePerKilometer: {UserInfo.pricePerKilometer}</Text>
+            <Text> ServiceKind: {UserInfo.serviceKind}</Text>
+            <Text> ManufactureYear: {UserInfo.manufactureYear}</Text>
+            <Text> Color: {UserInfo.color}</Text>
+            <Text> CarModel: {UserInfo.carModel}</Text>
+            <Text> NumberOfSeats: {UserInfo.numberOfSeats}</Text>
+          </View>
+        ) : (null) }
+
         <Button
           style={styles.btn}
           onPress={() => this._logout() }
