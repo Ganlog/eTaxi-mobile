@@ -22,6 +22,11 @@ export default class AccountScreen extends React.Component {
   }
 
 
+  _logout() {
+    UserInfo.eraseInfo();
+    ScreenNavigation.goto('l_ChoiceScreen');
+  };
+
 
   render() {
     return (
