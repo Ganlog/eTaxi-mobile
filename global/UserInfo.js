@@ -3,6 +3,7 @@ import { AsyncStorage } from 'react-native';
 export default {
   token: null,
   userType: null,
+  avatar: null,
   username: null,
   firstName: null,
   lastName: null,
@@ -20,10 +21,12 @@ export default {
   },
 
   eraseInfo: function(){
-    AsyncStorage.removeItem('userType');
-    this.userType = null;
     AsyncStorage.removeItem('token');
     this.token = null;
+    AsyncStorage.removeItem('userType');
+    this.userType = null;
+    AsyncStorage.removeItem('avatar');
+    this.avatar = null;
     AsyncStorage.removeItem('username');
     this.username = null;
     AsyncStorage.removeItem('firstName');
@@ -49,6 +52,7 @@ export default {
   getParamsOnLoad: function(){
     AsyncStorage.getItem('token').then((value) => { this.token = value; });
     AsyncStorage.getItem('userType').then((value) => { this.userType = value; });
+    AsyncStorage.getItem('avatar').then((value) => { this.avatar = value; });
     AsyncStorage.getItem('username').then((value) => { this.username = value; });
     AsyncStorage.getItem('firstName').then((value) => { this.firstName = value; });
     AsyncStorage.getItem('lastName').then((value) => { this.lastName = value; });

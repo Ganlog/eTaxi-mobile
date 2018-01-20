@@ -4,9 +4,9 @@ import { Ionicons } from '@expo/vector-icons';
 import { TabNavigator, TabBarBottom } from 'react-navigation';
 
 import Colors from '../constants/Colors';
-
+import ScreenNavigation from '../global/ScreenNavigation';
 import AboutScreen from '../screens/AboutScreen';
-import AccountScreen from "../screens/AccountScreen";
+import AccountScreen from '../screens/AccountScreen';
 import LoginScreensNavigator from './LoginScreensNavigator';
 
 
@@ -25,8 +25,8 @@ export default TabNavigator(
   {
     navigationOptions: ({ navigation }) => ({
       tabBarOnPress: (scene, jumpToIndex) => {
-        console.log('pressed:', scene.route);
-        jumpToIndex(scene.index);
+        let destinationScreen = scene.route.routeName + ((scene.route.routeName == 'Home') ? 'Screen' : '');
+        ScreenNavigation.goto(destinationScreen, {rand: Math.floor(Math.random() * 100) + 1})
       },
       tabBarIcon: ({ focused }) => {
         const { routeName } = navigation.state;

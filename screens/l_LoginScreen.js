@@ -13,18 +13,33 @@ export default class LoginScreen extends React.Component {
 
   constructor(props) {
     super(props);
-    this.focusNextField = this.focusNextField.bind(this);
+    this._focusNextField = this._focusNextField.bind(this);
     this.inputs = {};
     this.state = {
       isLoading: false,
       response: '',
       username: '',
       password: '',
+      loginSuccess: false
     }
   }
 
+  _clearLoginData(){
+    this.setState({
+      response: '',
+      isLoading: false,
+      loginSuccess: null,
+    });
 
-  focusNextField(id) {
+    this.inputs['UsernameInput'].clear();
+    this.inputs['PasswordInput'].clear();
+    this.setState({
+      username: null,
+      password: null,
+    });
+  }
+
+  _focusNextField(id) {
     this.inputs[id].focus();
   }
 
@@ -32,41 +47,69 @@ export default class LoginScreen extends React.Component {
   _login(username, password) {
     this.setState({ isLoading: true });
 
-    const formBody = `username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}&grant_type=password`;
-    console.log(formBody);
+    const formBody = `username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`;
     const hashedCredentials = Encript.btoa(username+':'+password);
-    console.log(hashedCredentials);
-    fetch('http://85.255.11.29:8080/api/v1/login', {
+    fetch('http://85.255.11.29:8080/login', {
       method: 'POST',
       headers: {
-        'Content-Type': "application/x-www-form-urlencoded;charset=UTF-8",
-        Authorization: "Basic ${hashedCredentials}"
+        'Content-Type': 'application/x-www-form-urlencoded',
+        Authorization: 'Basic '+hashedCredentials
       },
       body: formBody
     })
     .then((response) => response.json())
     .then((responseJson) => {
-      UserInfo.storeParam('token', hashedCredentials);
       if(responseJson.error){
         this.setState({
           response: <Text style={{ color: 'red' }}>{responseJson.error}</Text>,
           isLoading: false,
         });
       }
-      else if(responseJson.access_token) {
-        UserInfo.storeParam('token', responseJson.access_token);
-        UserInfo.storeParam('username', this.state.username);
-
-        this.inputs['UsernameInput'].clear();
-        this.inputs['PasswordInput'].clear();
+      else if(responseJson.message && responseJson.message == 'LOGIN_SUCCESS') {
+        UserInfo.storeParam('token', hashedCredentials);
         this.setState({
-          isLoading: false,
-          response: '',
-          username: '',
-          password: '',
+          response: 'Login successful',
+          loginSuccess: true
         });
+        fetch('http://85.255.11.29:8080/api/v1/users/current', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Basic '+hashedCredentials
+          }
+        })
+        .then((response) => response.json())
+        .then((resp) => {
+          console.log(resp);
+          if(resp.error){
+            this.setState({
+              response: <Text style={{ color: 'red' }}>{resp.error}</Text>,
+            });
+          }
+          else{
+            UserInfo.storeParam('token', hashedCredentials);
+            UserInfo.storeParam('avatar', resp.avatar.image);
+            UserInfo.storeParam('userType', (resp.role[0].role == 'STANDARD_USER') ? 'user' : (resp.role[0].role == 'DRIVER_USER') ? 'driver' : 'admin');
+            UserInfo.storeParam('username', resp.username);
+            UserInfo.storeParam('firstName', resp.firstName);
+            UserInfo.storeParam('lastName', resp.lastName);
+            UserInfo.storeParam('email', resp.email);
 
-        ScreenNavigation.goto('HomeScreen');
+            if(UserInfo.userType == 'driver'){
+              UserInfo.storeParam('pricePerKilometer', resp.pricePerKilometer);
+              UserInfo.storeParam('serviceKind', resp.serviceKind);
+              UserInfo.storeParam('manufactureYear', resp.manufactureYear);
+              UserInfo.storeParam('color', resp.color);
+              UserInfo.storeParam('carModel', resp.carModel);
+              UserInfo.storeParam('numberOfSeats', resp.numberOfSeats);
+            }
+            this.setState({
+              response: "Successfully logged in",
+              isLoading: false,
+              registerSuccess: true
+            });
+          }
+        })
       }
     })
     .catch((error) => {
@@ -75,6 +118,10 @@ export default class LoginScreen extends React.Component {
   };
 
 
+  _openApplication(){
+    this._clearLoginData();
+    ScreenNavigation.goto('HomeScreen');
+  }
 
 
 
@@ -89,27 +136,27 @@ export default class LoginScreen extends React.Component {
           style={styles.input}
           ref={ input => { this.inputs['UsernameInput'] = input; }}
           onChangeText={username => this.setState({username})}
-          placeholder="Full Name"
-          autoCapitalize="none"
-          keyboardType="default"
-          returnKeyType="next"
+          placeholder='Full Name'
+          autoCapitalize='none'
+          keyboardType='default'
+          returnKeyType='next'
           blurOnSubmit={false}
-          onSubmitEditing={() => { this.focusNextField('PasswordInput'); }}
+          onSubmitEditing={() => { this._focusNextField('PasswordInput'); }}
         />
         <TextInput
           style={styles.input}
           ref={ input => { this.inputs['PasswordInput'] = input; }}
           onChangeText={password => this.setState({password})}
-          placeholder="Password"
-          autoCapitalize="none"
-          returnKeyType="next"
+          placeholder='Password'
+          autoCapitalize='none'
+          returnKeyType='done'
           secureTextEntry={true}
           blurOnSubmit={false}
           onSubmitEditing={Keyboard.dismiss}
         />
         <Button
           onPress={() => this._login(this.state.username, this.state.password)}
-          title="Login"
+          title='Login'
           color={Colors.tintColor}
         />
 
@@ -119,6 +166,17 @@ export default class LoginScreen extends React.Component {
         ) : (
           <Text style={styles.alignCenter}>{this.state.response}</Text>
         )}
+
+        {this.state.loginSuccess ? (
+          <View>
+            <View style={{margin: 5}} />
+            <Button
+              onPress={() => this._openApplication()}
+              title='Open Application'
+              color={Colors.tintColor}
+            />
+          </View>) : ( null )
+        }
 
       </View>
     );

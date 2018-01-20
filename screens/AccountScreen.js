@@ -13,34 +13,19 @@ export default class AccountScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      rand: null,
     }
   }
 
-  _logout() {
-    UserInfo.eraseInfo();
-    ScreenNavigation.goto('l_ChoiceScreen');
-  };
 
-
-_refreshView() {
-  this.setState({ rand: ('k'+Math.floor(Math.random() * 100) + 1) })
-}
-
-
-
+  componentWillReceiveProps(props){
+    console.log(props);
+  }
 
 
 
   render() {
     return (
-      <View style={{flex: 1, paddingTop: 20}} key = {this.state.rand}>
-        <Button
-          style={styles.btn}
-          onPress={() => this._refreshView() }
-          title="Reresh"
-            color={Colors.tintColor}
-        />
+      <View style={{flex: 1, paddingTop: 20}}>
         <Text style={styles.titleText}>
           Your {this.state.userType} account Details:
         </Text>

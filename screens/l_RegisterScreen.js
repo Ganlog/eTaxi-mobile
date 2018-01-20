@@ -40,6 +40,7 @@ export default class RegisterScreen extends React.Component {
 
   componentWillReceiveProps(props){
     this.state.userType = props.navigation.state.params.userType;
+    console.log("dostalem");
   }
 
   _clearRegisterData(){
@@ -94,7 +95,7 @@ export default class RegisterScreen extends React.Component {
 
   _register(username, firstName, lastName, email, password, matchingPassword, pricePerKilometer, serviceKind, manufactureYear, color, carModel, numberOfSeats) {
     this.setState({ isLoading: true})
-    return fetch('http://85.255.11.29:8080/api/v1/users/'+this.state.userType+"Register", {
+    return fetch('http://85.255.11.29:8080/api/v1/users/'+this.state.userType+'Register', {
       method: 'POST',
       headers: {
         Accept: 'application/json', 'Content-Type': 'application/json',
@@ -106,7 +107,7 @@ export default class RegisterScreen extends React.Component {
       if(responseJson.errors){
         let error, errors={}, regRespText;
         for(let i in responseJson.errors){
-          error = responseJson.errors[i].split(": ");
+          error = responseJson.errors[i].split(': ');
           errors[error[0]] = error[1];
         }
         if(responseJson.errors.length == 1)
@@ -137,12 +138,12 @@ export default class RegisterScreen extends React.Component {
     return fetch('http://85.255.11.29:8080/api/v1/users/registrationConfirm/'+this.state.regTokenReceived, {
       method: 'GET',
       headers: {
-        Accept: 'application/json', 'Content-Type': 'application/json',
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
       },
     })
     .then((response) => response.json())
     .then((responseJson) => {
-      console.log(responseJson);
       if(responseJson.errors){
         this.setState({
           regRespText: <Text style={styles.error}>{responseJson.errors}</Text>,
@@ -151,7 +152,7 @@ export default class RegisterScreen extends React.Component {
       }
       else if(responseJson.message) {
         if(responseJson.token)
-        UserInfo.storeParam('token', responseJson.token);
+          UserInfo.storeParam('token', responseJson.token);
         UserInfo.storeParam('userType', this.state.userType);
         UserInfo.storeParam('username', this.state.username);
         UserInfo.storeParam('firstName', this.state.firstName);
@@ -159,7 +160,7 @@ export default class RegisterScreen extends React.Component {
         UserInfo.storeParam('email', this.state.email);
 
         if(this.state.userType == 'driver'){
-          UserInfo.storeParam('pricePerKilometer', this.state.pricePerKilometer+"."+this.state.pricePerKilometer2);
+          UserInfo.storeParam('pricePerKilometer', this.state.pricePerKilometer+'.'+this.state.pricePerKilometer2);
           UserInfo.storeParam('serviceKind', this.state.serviceKind.toLowerCase());
           UserInfo.storeParam('manufactureYear', this.state.manufactureYear);
           UserInfo.storeParam('color', this.state.color);
@@ -167,7 +168,7 @@ export default class RegisterScreen extends React.Component {
           UserInfo.storeParam('numberOfSeats', this.state.numberOfSeats);
         }
         this.setState({
-          regRespText: responseJson.message,
+          regRespText: "Successfully registered",
           isLoading: false,
           registerSuccess: true
         });
@@ -195,7 +196,7 @@ export default class RegisterScreen extends React.Component {
   render() {
     const { navigate } = this.props.navigation;
     return (
-      <KeyboardAvoidingView style={styles.container} behavior="padding">
+      <KeyboardAvoidingView style={styles.container} behavior='padding'>
         <ScrollView>
           <Text style={styles.titleText}>Register as a {this.state.userType}</Text>
 
@@ -204,8 +205,8 @@ export default class RegisterScreen extends React.Component {
             style={styles.input}
             ref={ input => { this.inputs['UsernameInput'] = input; }}
             onChangeText={username => this.setState({username})}
-            placeholder="Username"
-            returnKeyType="next"
+            placeholder='Username'
+            returnKeyType='next'
             blurOnSubmit={false}
             onSubmitEditing={() => { this._focusNextField('FirstNameInput'); }}
           />
@@ -216,8 +217,8 @@ export default class RegisterScreen extends React.Component {
             style={styles.input}
             ref={ input => { this.inputs['FirstNameInput'] = input; }}
             onChangeText={firstName => this.setState({firstName})}
-            placeholder="First Name"
-            returnKeyType="next"
+            placeholder='First Name'
+            returnKeyType='next'
             blurOnSubmit={false}
             onSubmitEditing={() => { this._focusNextField('LastNameInput'); }}
           />
@@ -228,8 +229,8 @@ export default class RegisterScreen extends React.Component {
             style={styles.input}
             ref={ input => { this.inputs['LastNameInput'] = input; }}
             onChangeText={lastName => this.setState({lastName})}
-            placeholder="Last Name"
-            returnKeyType="next"
+            placeholder='Last Name'
+            returnKeyType='next'
             blurOnSubmit={false}
             onSubmitEditing={() => { this._focusNextField('EmailInput'); }}
           />
@@ -239,10 +240,10 @@ export default class RegisterScreen extends React.Component {
             style={styles.input}
             ref={ input => { this.inputs['EmailInput'] = input; }}
             onChangeText={email => this.setState({email})}
-            placeholder="email@example.com"
-            keyboardType="email-address"
-            autoCapitalize="none"
-            returnKeyType="next"
+            placeholder='email@example.com'
+            keyboardType='email-address'
+            autoCapitalize='none'
+            returnKeyType='next'
             blurOnSubmit={false}
             onSubmitEditing={() => { this._focusNextField('PasswordInput'); }}
           />
@@ -253,9 +254,9 @@ export default class RegisterScreen extends React.Component {
             style={styles.input}
             ref={ input => { this.inputs['PasswordInput'] = input; }}
             onChangeText={password => this.setState({password})}
-            placeholder="Password"
-            autoCapitalize="none"
-            returnKeyType="next"
+            placeholder='Password'
+            autoCapitalize='none'
+            returnKeyType='next'
             secureTextEntry={true}
             blurOnSubmit={false}
             onSubmitEditing={() => { this._focusNextField('MatchPassInput'); }}
@@ -267,9 +268,9 @@ export default class RegisterScreen extends React.Component {
             style={styles.input}
             ref={ input => { this.inputs['MatchPassInput'] = input; }}
             onChangeText={matchingPassword => this.setState({matchingPassword})}
-            placeholder="Repeat password"
-            autoCapitalize="none"
-            returnKeyType={ (this.state.userType == 'user') ? "done" : "next" }
+            placeholder='Repeat password'
+            autoCapitalize='none'
+            returnKeyType={ (this.state.userType == 'user') ? 'done' : 'next' }
             secureTextEntry={true}
             blurOnSubmit={ (this.state.userType == 'user') ? true : false }
             onSubmitEditing={() => { (this.state.userType == 'user') ? (Keyboard.dismiss) : (this._focusNextField('PricePerKilometerInput')) }}
@@ -288,9 +289,9 @@ export default class RegisterScreen extends React.Component {
                         style={{flex:0.5, height: 40, padding: 5}}
                         ref={ input => { this.inputs['PricePerKilometerInput'] = input; }}
                         onChangeText={pricePerKilometer => this.setState({pricePerKilometer})}
-                        placeholder="Price per kilometer"
-                        keyboardType="numeric"
-                        returnKeyType="next"
+                        placeholder='Price per kilometer'
+                        keyboardType='numeric'
+                        returnKeyType='next'
                         blurOnSubmit={false}
                         onSubmitEditing={() => { this._focusNextField('PricePerKilometerInput2'); }}
                       />
@@ -301,9 +302,9 @@ export default class RegisterScreen extends React.Component {
                         style={{flex:0.5, height: 40, padding: 5}}
                         ref={ input => { this.inputs['PricePerKilometerInput2'] = input; }}
                         onChangeText={pricePerKilometer2 => this.setState({pricePerKilometer2})}
-                        placeholder="decimal"
-                        keyboardType="numeric"
-                        returnKeyType="next"
+                        placeholder='decimal'
+                        keyboardType='numeric'
+                        returnKeyType='next'
                         blurOnSubmit={false}
                         onSubmitEditing={() => { this._focusNextField('ManufactureYearInput'); }}
                       />
@@ -321,9 +322,9 @@ export default class RegisterScreen extends React.Component {
                     style={styles.input}
                     ref={ input => { this.inputs['ManufactureYearInput'] = input; }}
                     onChangeText={manufactureYear => this.setState({manufactureYear})}
-                    placeholder="Car manufacture year"
-                    keyboardType="numeric"
-                    returnKeyType="next"
+                    placeholder='Car manufacture year'
+                    keyboardType='numeric'
+                    returnKeyType='next'
                     blurOnSubmit={false}
                     onSubmitEditing={() => { this._focusNextField('ColorInput'); }}
                   />
@@ -338,9 +339,9 @@ export default class RegisterScreen extends React.Component {
                     style={styles.input}
                     ref={ input => { this.inputs['ColorInput'] = input; }}
                     onChangeText={color => this.setState({color})}
-                    placeholder="Car color"
-                    autoCapitalize="none"
-                    returnKeyType="next"
+                    placeholder='Car color'
+                    autoCapitalize='none'
+                    returnKeyType='next'
                     blurOnSubmit={false}
                     onSubmitEditing={() => { this._focusNextField('CarModelInput'); }}
                   />
@@ -355,8 +356,8 @@ export default class RegisterScreen extends React.Component {
                     style={styles.input}
                     ref={ input => { this.inputs['CarModelInput'] = input; }}
                     onChangeText={carModel => this.setState({carModel})}
-                    placeholder="Car model"
-                    returnKeyType="next"
+                    placeholder='Car model'
+                    returnKeyType='next'
                     blurOnSubmit={false}
                     onSubmitEditing={() => { this._focusNextField('NumberOfSeatsInput'); }}
                   />
@@ -371,9 +372,9 @@ export default class RegisterScreen extends React.Component {
                     style={styles.input}
                     ref={ input => { this.inputs['NumberOfSeatsInput'] = input; }}
                     onChangeText={numberOfSeats => this.setState({numberOfSeats})}
-                    placeholder="Number of seats in car"
-                    keyboardType="numeric"
-                    returnKeyType="done"
+                    placeholder='Number of seats in car'
+                    keyboardType='numeric'
+                    returnKeyType='done'
                     blurOnSubmit={true}
                   />
                 ) : (null) }
@@ -388,8 +389,8 @@ export default class RegisterScreen extends React.Component {
                     <Picker
                       selectedValue={this.state.serviceKind}
                       onValueChange={(itemValue, itemIndex) => this.setState({serviceKind: itemValue})}>
-                      <Picker.Item label="Premium" value="PREMIUM" />
-                      <Picker.Item label="Standard" value="STANDARD" />
+                      <Picker.Item label='Premium' value='PREMIUM' />
+                      <Picker.Item label='Standard' value='STANDARD' />
                     </Picker>
                   </View>
                 ) : (null) }
@@ -407,7 +408,7 @@ export default class RegisterScreen extends React.Component {
                   this.state.matchingPassword
                 )
               }
-              title="Register user"
+              title='Register user'
               color={Colors.tintColor}
             />
           ) : (
@@ -420,7 +421,7 @@ export default class RegisterScreen extends React.Component {
                   this.state.email,
                   this.state.password,
                   this.state.matchingPassword,
-                  this.state.pricePerKilometer+"."+this.state.pricePerKilometer2,
+                  this.state.pricePerKilometer+'.'+this.state.pricePerKilometer2,
                   this.state.serviceKind,
                   this.state.manufactureYear,
                   this.state.color,
@@ -428,7 +429,7 @@ export default class RegisterScreen extends React.Component {
                   this.state.numberOfSeats
                 )
               }
-              title="Register driver"
+              title='Register driver'
               color={Colors.tintColor}
             />
           )}
@@ -439,7 +440,7 @@ export default class RegisterScreen extends React.Component {
           {this.state.regTokenReceived ? (
             <Button
               onPress={() => this._confirmRegistration()}
-              title="Confirm registration"
+              title='Confirm registration'
               color={Colors.tintColor}
             />) : ( null )
           }
@@ -449,14 +450,13 @@ export default class RegisterScreen extends React.Component {
               <View style={{margin: 5}} />
               <Button
                 onPress={() => this._openApplication()}
-                title="Open Application"
+                title='Open Application'
                 color={Colors.tintColor}
               />
             </View>) : ( null )
           }
-            <View style={{ height: 120 }} />
-          </ScrollView>
-
+          <View style={{ height: 120 }} />
+        </ScrollView>
       </KeyboardAvoidingView>
     );
   }

@@ -3,7 +3,7 @@ import { AsyncStorage, Image, ScrollView, Dimensions, StyleSheet, Text, View, Bu
 import { MapView } from 'expo';
 import UserInfo from '../global/UserInfo';
 import ScreenNavigation from '../global/ScreenNavigation';
-
+import webstomp from 'webstomp-client';
 
 export default class HomeScreen extends React.Component {
   static navigationOptions = {
@@ -14,6 +14,33 @@ export default class HomeScreen extends React.Component {
   constructor(props) {
     super(props);
     ScreenNavigation.setNavigate(this.props.navigation);
+
+      options = {debug: false, protocols: webstomp.VERSIONS.supportedProtocols()};
+      login = 'guest', password = 'guest',
+      user = "test";
+
+      ws = webstomp.over( new WebSocket('ws://85.255.11.29:8080/ws'));
+
+      ws.connect({}, function(frame) {
+    		ws.subscribe("/user/queue/errors", function(message) {
+    			alert("Socket error " + message.body);
+    		});
+
+    		ws.subscribe("/user/queue/reply", function(message) {
+          console.log(message.body);
+    		});
+
+        var data = JSON.stringify({
+      		'name' : $("#name").val()
+      	})
+      	ws.send("/message", {}, data);
+
+    	}, function(error) {
+    		alert("STOMP error " + error);
+        console.log(error);
+    	});
+
+
     if(!UserInfo.username)
       ScreenNavigation.goto('l_ChoiceScreen');
   }
@@ -36,12 +63,18 @@ export default class HomeScreen extends React.Component {
   };
 
 
+  componentWillReceiveProps(props){
+    console.log(props);
+  }
+
+
   _handleMapRegionChange = mapRegion => {
     this.setState({ mapRegion });
   };
 
 
   _handlePress = press => {
+    UserInfo.storeParam('username', ('k'+Math.floor(Math.random() * 100) + 1));
     this.state.markers.push(
       {
         title: 'hello',

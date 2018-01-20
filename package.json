@@ -13,7 +13,8 @@
     "react": "16.0.0",
     "react-native": "https://github.com/expo/react-native/archive/sdk-23.0.0.tar.gz",
     "react-native-keyboard-spacer": "^0.4.1",
-    "react-navigation": "^1.0.0-beta.19"
+    "react-navigation": "^1.0.0-beta.19",
+    "webstomp-client": "^1.2.0"
   },
   "devDependencies": {
     "jest-expo": "^23.0.0"

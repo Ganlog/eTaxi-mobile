@@ -1,15 +1,20 @@
 import React from 'react';
 import { ScrollView, StyleSheet, View, Text, Platform } from 'react-native';
+import ScreenNavigation from '../global/ScreenNavigation';
 
 export default class AboutScreen extends React.Component {
   static navigationOptions = {
     title: 'About',
   };
 
+  constructor(props) {
+    super(props);
+  }
 
 
-
-
+  componentWillReceiveProps(props){
+    console.log(props);
+  }
 
 
 

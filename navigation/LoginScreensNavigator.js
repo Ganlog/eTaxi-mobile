@@ -24,6 +24,7 @@ export default LoginScreensNavigator = TabNavigator(
     },
   },
   {
+    initialRouteName: 'HomeScreen',
     tabBarOptions: {
       style: {
         display: 'none',
