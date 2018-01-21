@@ -34,10 +34,6 @@ export default class App extends React.Component {
     UserInfo.getParamsOnLoad();
 
     return Promise.all([
-      Asset.loadAsync([
-        require('./assets/images/dev.png'),
-        require('./assets/images/prod.png'),
-      ]),
       Font.loadAsync({
         ...Ionicons.font,
         'space-mono': require('./assets/fonts/SpaceMono-Regular.ttf'),

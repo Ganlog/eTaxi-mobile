@@ -1,10 +1,14 @@
 import React from 'react';
 import { ScrollView, StyleSheet, View, Text, Platform } from 'react-native';
+import Colors from '../constants/Colors';
 import ScreenNavigation from '../global/ScreenNavigation';
 
 export default class AboutScreen extends React.Component {
   static navigationOptions = {
     title: 'About',
+    headerStyle: {
+     backgroundColor: Colors.tintColor
+   },
   };
 
   constructor(props) {

@@ -8,6 +8,9 @@ import ScreenNavigation from '../global/ScreenNavigation';
 export default class LoginScreen extends React.Component {
   static navigationOptions = {
     title: 'Login to your account',
+    headerStyle: {
+     backgroundColor: Colors.tintColor
+   },
   };
 
 
@@ -28,7 +31,7 @@ export default class LoginScreen extends React.Component {
     this.setState({
       response: '',
       isLoading: false,
-      loginSuccess: null,
+      loginSuccess: false,
     });
 
     this.inputs['UsernameInput'].clear();
@@ -66,11 +69,7 @@ export default class LoginScreen extends React.Component {
         });
       }
       else if(responseJson.message && responseJson.message == 'LOGIN_SUCCESS') {
-        UserInfo.storeParam('token', hashedCredentials);
-        this.setState({
-          response: 'Login successful',
-          loginSuccess: true
-        });
+
         fetch('http://85.255.11.29:8080/api/v1/users/current', {
           method: 'GET',
           headers: {
@@ -80,7 +79,6 @@ export default class LoginScreen extends React.Component {
         })
         .then((response) => response.json())
         .then((resp) => {
-          console.log(resp);
           if(resp.error){
             this.setState({
               response: <Text style={{ color: 'red' }}>{resp.error}</Text>,
@@ -96,15 +94,16 @@ export default class LoginScreen extends React.Component {
             UserInfo.storeParam('email', resp.email);
 
             if(UserInfo.userType == 'driver'){
-              UserInfo.storeParam('pricePerKilometer', resp.pricePerKilometer);
-              UserInfo.storeParam('serviceKind', resp.serviceKind);
-              UserInfo.storeParam('manufactureYear', resp.manufactureYear);
+              UserInfo.storeParam('pricePerKilometer', resp.pricePerKilometer.toString());
+              UserInfo.storeParam('serviceKind', (resp.serviceKind) ? resp.serviceKind.toLowerCase() : null);
+              UserInfo.storeParam('manufactureYear',  resp.manufactureYear.toString());
               UserInfo.storeParam('color', resp.color);
               UserInfo.storeParam('carModel', resp.carModel);
-              UserInfo.storeParam('numberOfSeats', resp.numberOfSeats);
+              UserInfo.storeParam('numberOfSeats',  resp.numberOfSeats.toString());
             }
             this.setState({
               response: "Successfully logged in",
+              loginSuccess: true,
               isLoading: false,
               registerSuccess: true
             });
@@ -203,7 +202,7 @@ const styles = StyleSheet.create({
     marginTop: 5,
     marginBottom: 5,
     padding: 5,
-    height: 40,
+    height: 30,
     borderWidth: 1
   },
   alignCenter: {

@@ -7,6 +7,9 @@ import { NavigationActions } from 'react-navigation';
 export default class LoginScreen extends React.Component {
   static navigationOptions = {
     title: 'Login or register',
+    headerStyle: {
+     backgroundColor: Colors.tintColor
+   },
   };
 
 

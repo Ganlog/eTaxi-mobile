@@ -7,6 +7,9 @@ import ScreenNavigation from '../global/ScreenNavigation';
 export default class RegisterScreen extends React.Component {
   static navigationOptions = {
     title: 'Register your account',
+    headerStyle: {
+     backgroundColor: Colors.tintColor
+   },
   };
 
 
@@ -475,7 +478,7 @@ const styles = StyleSheet.create({
     marginLeft: 15,
     marginRight: 15,
     padding: 5,
-    height: 40,
+    height: 30,
     borderWidth: 1
   },
   titleText: {
