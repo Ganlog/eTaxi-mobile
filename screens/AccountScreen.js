@@ -1,5 +1,5 @@
 import React from 'react';
-import { Keyboard, ScrollView, Button, StyleSheet, ListView, Text, TextInput, View } from 'react-native';
+import { Button, StyleSheet, Text, View } from 'react-native';
 import Colors from '../constants/Colors';
 import UserInfo from '../global/UserInfo';
 import ScreenNavigation from '../global/ScreenNavigation';

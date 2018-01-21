@@ -123,6 +123,7 @@ export default class RegisterScreen extends React.Component {
         this.setState({
           regRespText: responseJson.message,
           regTokenReceived: responseJson.token,
+          errors: [],
           isLoading: false,
         });
       }
@@ -169,6 +170,7 @@ export default class RegisterScreen extends React.Component {
         this.setState({
           regRespText: 'Successfully registered',
           isLoading: false,
+          errors: [],
           registerSuccess: true
         });
       }

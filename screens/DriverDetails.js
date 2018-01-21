@@ -1,10 +1,7 @@
 import React from 'react';
-import { AsyncStorage, Image, ScrollView, Dimensions, StyleSheet, Text, View, Button, InteractionManager, TextInput, Keyboard } from 'react-native';
-import { MapView } from 'expo';
+import { StyleSheet, Text, View, Button } from 'react-native';
 import Colors from '../constants/Colors';
-import UserInfo from '../global/UserInfo';
 import ScreenNavigation from '../global/ScreenNavigation';
-import SockJS from 'socket.io-client';
 
 // import webstomp from 'webstomp-client';
 

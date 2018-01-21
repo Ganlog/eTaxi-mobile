@@ -1,8 +1,7 @@
 import React from 'react';
-import { Keyboard, ActivityIndicator, ScrollView, Button, StyleSheet, ListView, Text, TextInput, View, AsyncStorage } from 'react-native';
+import { Button, StyleSheet, Text, View } from 'react-native';
 import Colors from '../constants/Colors';
 import ScreenNavigation from '../global/ScreenNavigation';
-import { NavigationActions } from 'react-navigation';
 
 export default class LoginScreen extends React.Component {
   static navigationOptions = {

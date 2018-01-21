@@ -1,10 +1,9 @@
-import React, { Component } from 'react';
 import HomeScreen from '../screens/HomeScreen';
 import DriverDetails from '../screens/DriverDetails';
 import l_ChoiceScreen from '../screens/l_ChoiceScreen';
 import l_LoginScreen from '../screens/l_LoginScreen';
 import l_RegisterScreen from '../screens/l_RegisterScreen';
-import { TabNavigator } from 'react-navigation';
+import { TabNavigator } from 'react-navigation'; // 1.0.0-beta.27
 
 export default LoginScreensNavigator = TabNavigator(
   {
@@ -13,19 +12,19 @@ export default LoginScreensNavigator = TabNavigator(
     },
     DriverDetails: {
       screen: DriverDetails,
-      navigationOptions: ({ navigation }) => ({ tabBarVisible: false })
+      navigationOptions: () => ({ tabBarVisible: false }),
     },
     l_ChoiceScreen: {
       screen: l_ChoiceScreen,
-      navigationOptions: ({ navigation }) => ({ tabBarVisible: false })
+      navigationOptions: () => ({ tabBarVisible: false }),
     },
     l_LoginScreen: {
       screen: l_LoginScreen,
-      navigationOptions: ({ navigation }) => ({ tabBarVisible: false })
+      navigationOptions: () => ({ tabBarVisible: false }),
     },
     l_RegisterScreen: {
       screen: l_RegisterScreen,
-      navigationOptions: ({ navigation }) => ({ tabBarVisible: false })
+      navigationOptions: () => ({ tabBarVisible: false }),
     },
   },
   {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { AsyncStorage, Image, ScrollView, Dimensions, StyleSheet, Text, View, Button, InteractionManager, TextInput, Keyboard } from 'react-native';
+import { Dimensions, StyleSheet, Text, View, Button, ScrollView } from 'react-native';
 import { MapView } from 'expo';
 import Colors from '../constants/Colors';
 import UserInfo from '../global/UserInfo';
