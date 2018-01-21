@@ -2,14 +2,12 @@ import React from 'react';
 import { Keyboard, ActivityIndicator, ScrollView, Button, StyleSheet, ListView, Text, TextInput, View, KeyboardAvoidingView, Picker } from 'react-native';
 import Colors from '../constants/Colors';
 import UserInfo from '../global/UserInfo';
+import Encript from '../global/Encript';
 import ScreenNavigation from '../global/ScreenNavigation';
 
 export default class RegisterScreen extends React.Component {
   static navigationOptions = {
-    title: 'Register your account',
-    headerStyle: {
-     backgroundColor: Colors.tintColor
-   },
+    header: null,
   };
 
 
@@ -43,7 +41,6 @@ export default class RegisterScreen extends React.Component {
 
   componentWillReceiveProps(props){
     this.state.userType = props.navigation.state.params.userType;
-    console.log("dostalem");
   }
 
   _clearRegisterData(){
@@ -154,8 +151,7 @@ export default class RegisterScreen extends React.Component {
         });
       }
       else if(responseJson.message) {
-        if(responseJson.token)
-          UserInfo.storeParam('token', responseJson.token);
+        UserInfo.storeParam('token', Encript.btoa(this.state.username+':'+this.state.password));
         UserInfo.storeParam('userType', this.state.userType);
         UserInfo.storeParam('username', this.state.username);
         UserInfo.storeParam('firstName', this.state.firstName);
@@ -171,7 +167,7 @@ export default class RegisterScreen extends React.Component {
           UserInfo.storeParam('numberOfSeats', this.state.numberOfSeats);
         }
         this.setState({
-          regRespText: "Successfully registered",
+          regRespText: 'Successfully registered',
           isLoading: false,
           registerSuccess: true
         });
@@ -185,7 +181,7 @@ export default class RegisterScreen extends React.Component {
 
   _openApplication(){
     this._clearRegisterData();
-    ScreenNavigation.goto('HomeScreen');
+    ScreenNavigation.goto('HomeScreen', {selectedDriver: null});
   }
 
 
@@ -200,8 +196,10 @@ export default class RegisterScreen extends React.Component {
     const { navigate } = this.props.navigation;
     return (
       <KeyboardAvoidingView style={styles.container} behavior='padding'>
-        <ScrollView>
+        <View style={styles.header}>
           <Text style={styles.titleText}>Register as a {this.state.userType}</Text>
+        </View>
+        <ScrollView>
 
 
           <TextInput
@@ -210,6 +208,7 @@ export default class RegisterScreen extends React.Component {
             onChangeText={username => this.setState({username})}
             placeholder='Username'
             returnKeyType='next'
+            autoCapitalize='none'
             blurOnSubmit={false}
             onSubmitEditing={() => { this._focusNextField('FirstNameInput'); }}
           />
@@ -458,7 +457,7 @@ export default class RegisterScreen extends React.Component {
               />
             </View>) : ( null )
           }
-          <View style={{ height: 120 }} />
+          <View style={{ height: 50 }} />
         </ScrollView>
       </KeyboardAvoidingView>
     );
@@ -474,20 +473,28 @@ export default class RegisterScreen extends React.Component {
 
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  header:{
+    backgroundColor: Colors.tintColor,
+    marginBottom: 5,
+    height: 55,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  titleText: {
+    fontSize: 24,
+    padding: 5,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
   input: {
     marginLeft: 15,
     marginRight: 15,
     padding: 5,
     height: 30,
     borderWidth: 1
-  },
-  titleText: {
-    marginTop: 20,
-    marginBottom: 20,
-    fontSize: 24,
-    lineHeight: 30,
-    textAlign: 'center',
-    fontWeight: 'bold'
   },
   error: {
     color: 'red',

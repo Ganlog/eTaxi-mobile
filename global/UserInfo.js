@@ -14,6 +14,7 @@ export default {
   color: null,
   carModel: null,
   numberOfSeats: null,
+  locationTagID: null,
 
   storeParam: function(param, value){
     AsyncStorage.setItem(param, value);
@@ -21,6 +22,15 @@ export default {
   },
 
   eraseInfo: function(){
+
+    fetch('http://85.255.11.29:8080/api/v1/geotags/'+this.locationTagID, {
+      method: 'DELETE',
+      headers: {
+        Authorization: 'Basic '+this.token
+      }
+    })
+
+
     AsyncStorage.removeItem('token');
     this.token = null;
     AsyncStorage.removeItem('userType');
@@ -47,6 +57,8 @@ export default {
     this.carModel = null;
     AsyncStorage.removeItem('numberOfSeats');
     this.numberOfSeats = null;
+    AsyncStorage.removeItem('locationTagID');
+    this.locationTagID = null;
   },
 
   getParamsOnLoad: function(){
@@ -63,5 +75,7 @@ export default {
     AsyncStorage.getItem('color').then((value) => { this.color = value; });
     AsyncStorage.getItem('carModel').then((value) => { this.carModel = value; });
     AsyncStorage.getItem('numberOfSeats').then((value) => { this.numberOfSeats = value; });
+    AsyncStorage.getItem('numberOfSeats').then((value) => { this.numberOfSeats = value; });
+    AsyncStorage.getItem('locationTagID').then((value) => { this.locationTagID = value; });
   },
 }

@@ -26,7 +26,7 @@ export default TabNavigator(
     navigationOptions: ({ navigation }) => ({
       tabBarOnPress: (scene, jumpToIndex) => {
         let destinationScreen = scene.route.routeName + ((scene.route.routeName == 'Home') ? 'Screen' : '');
-        ScreenNavigation.goto(destinationScreen, {rand: Math.floor(Math.random() * 100) + 1})
+        ScreenNavigation.goto(destinationScreen, {refresh: true})
       },
       tabBarIcon: ({ focused }) => {
         const { routeName } = navigation.state;

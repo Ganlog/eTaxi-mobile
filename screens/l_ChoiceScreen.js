@@ -6,10 +6,7 @@ import { NavigationActions } from 'react-navigation';
 
 export default class LoginScreen extends React.Component {
   static navigationOptions = {
-    title: 'Login or register',
-    headerStyle: {
-     backgroundColor: Colors.tintColor
-   },
+    header: null,
   };
 
 
@@ -27,22 +24,25 @@ export default class LoginScreen extends React.Component {
 
   render() {
     return (
-      <View style={{flex: 1, paddingTop: 20}}>
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <Text style={styles.titleText}>Login or register</Text>
+        </View>
         <Button
           onPress={() => ScreenNavigation.goto('l_LoginScreen')}
-          title="Log in"
+          title='Log in'
           color={Colors.tintColor}
         />
         <View style={{margin: 5}} />
         <Button
-          onPress={() => ScreenNavigation.goto('l_RegisterScreen', {userType: "user"})}
-          title="Register as user"
+          onPress={() => ScreenNavigation.goto('l_RegisterScreen', {userType: 'user'})}
+          title='Register as user'
           color={Colors.tintColor}
         />
         <View style={{margin: 5}} />
         <Button
-          onPress={() => ScreenNavigation.goto('l_RegisterScreen', {userType: "driver"})}
-          title="Register as driver"
+          onPress={() => ScreenNavigation.goto('l_RegisterScreen', {userType: 'driver'})}
+          title='Register as driver'
           color={Colors.tintColor}
         />
       </View>
@@ -59,5 +59,20 @@ export default class LoginScreen extends React.Component {
 
 
 const styles = StyleSheet.create({
-
+  container: {
+    flex: 1,
+  },
+  header:{
+    backgroundColor: Colors.tintColor,
+    marginBottom: 15,
+    height: 55,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  titleText: {
+    fontSize: 24,
+    padding: 5,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
 });

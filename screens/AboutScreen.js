@@ -5,10 +5,7 @@ import ScreenNavigation from '../global/ScreenNavigation';
 
 export default class AboutScreen extends React.Component {
   static navigationOptions = {
-    title: 'About',
-    headerStyle: {
-     backgroundColor: Colors.tintColor
-   },
+    header: null,
   };
 
   constructor(props) {
@@ -17,7 +14,6 @@ export default class AboutScreen extends React.Component {
 
 
   componentWillReceiveProps(props){
-    console.log(props);
   }
 
 
@@ -26,6 +22,9 @@ export default class AboutScreen extends React.Component {
   render() {
     return (
       <View style={styles.container}>
+        <View style={styles.header}>
+          <Text style={styles.titleText}>About</Text>
+        </View>
         <ScrollView style={styles.container}>
         {
           // Informations about application
@@ -51,8 +50,19 @@ export default class AboutScreen extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 15,
-    backgroundColor: '#fff',
+  },
+  header:{
+    backgroundColor: Colors.tintColor,
+    marginBottom: 5,
+    height: 55,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  titleText: {
+    fontSize: 24,
+    padding: 5,
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
   tabBarInfoContainer: {
     position: 'absolute',

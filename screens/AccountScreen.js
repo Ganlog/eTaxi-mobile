@@ -6,22 +6,17 @@ import ScreenNavigation from '../global/ScreenNavigation';
 
 export default class AccountScreen extends React.Component {
   static navigationOptions = {
-    title: 'User Account',
-    headerStyle: {
-     backgroundColor: Colors.tintColor
-   },
+    header: null,
   };
 
 
   constructor(props) {
     super(props);
-    this.state = {
-    }
+    this.state = {}
   }
 
 
   componentWillReceiveProps(props){
-    console.log(props);
   }
 
 
@@ -33,31 +28,31 @@ export default class AccountScreen extends React.Component {
 
   render() {
     return (
-      <View style={{flex: 1, paddingTop: 20}}>
-        <Text style={styles.titleText}>
-          Your {UserInfo.userType} account Details:
-        </Text>
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <Text style={styles.titleText}>Your {UserInfo.userType} account details</Text>
+        </View>
 
         <Text><Text style={styles.bold}> Username: </Text> {UserInfo.username}</Text>
-        <Text><Text style={styles.bold}> FirstName: </Text> {UserInfo.firstName}</Text>
-        <Text><Text style={styles.bold}> LastName: </Text> {UserInfo.lastName}</Text>
+        <Text><Text style={styles.bold}> First name: </Text> {UserInfo.firstName}</Text>
+        <Text><Text style={styles.bold}> Last name: </Text> {UserInfo.lastName}</Text>
         <Text><Text style={styles.bold}> Email: </Text> {UserInfo.email}</Text>
 
         {(UserInfo.userType == 'driver') ? (
           <View>
-            <Text><Text style={styles.bold}> PricePerKilometer: </Text> {UserInfo.pricePerKilometer}</Text>
-            <Text><Text style={styles.bold}> ServiceKind: </Text> {UserInfo.serviceKind}</Text>
-            <Text><Text style={styles.bold}> ManufactureYear: </Text> {UserInfo.manufactureYear}</Text>
+            <Text><Text style={styles.bold}> Price per kilometer: </Text> {UserInfo.pricePerKilometer}</Text>
+            <Text><Text style={styles.bold}> Kind of service: </Text> {UserInfo.serviceKind}</Text>
+            <Text><Text style={styles.bold}> Car manufacture year: </Text> {UserInfo.manufactureYear}</Text>
             <Text><Text style={styles.bold}> Color: </Text> {UserInfo.color}</Text>
-            <Text><Text style={styles.bold}> CarModel: </Text> {UserInfo.carModel}</Text>
-            <Text><Text style={styles.bold}> NumberOfSeats: </Text> {UserInfo.numberOfSeats}</Text>
+            <Text><Text style={styles.bold}> Car Model: </Text> {UserInfo.carModel}</Text>
+            <Text><Text style={styles.bold}> Number of Seats: </Text> {UserInfo.numberOfSeats}</Text>
           </View>
         ) : (null) }
 
         <View style={{ height: 15 }} />
         <Button
           onPress={() => this._logout() }
-          title="Logout"
+          title='Logout'
           color={'red'}
         />
       </View>
@@ -73,9 +68,21 @@ export default class AccountScreen extends React.Component {
 
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  header:{
+    backgroundColor: Colors.tintColor,
+    marginBottom: 5,
+    height: 55,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   titleText: {
-    fontSize: 20,
+    fontSize: 24,
+    padding: 5,
     fontWeight: 'bold',
+    textAlign: 'center',
   },
   bold: {
     fontWeight: 'bold',

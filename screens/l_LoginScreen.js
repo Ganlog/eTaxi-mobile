@@ -7,10 +7,7 @@ import ScreenNavigation from '../global/ScreenNavigation';
 
 export default class LoginScreen extends React.Component {
   static navigationOptions = {
-    title: 'Login to your account',
-    headerStyle: {
-     backgroundColor: Colors.tintColor
-   },
+    header: null,
   };
 
 
@@ -102,7 +99,7 @@ export default class LoginScreen extends React.Component {
               UserInfo.storeParam('numberOfSeats',  resp.numberOfSeats.toString());
             }
             this.setState({
-              response: "Successfully logged in",
+              response: 'Successfully logged in',
               loginSuccess: true,
               isLoading: false,
               registerSuccess: true
@@ -119,7 +116,7 @@ export default class LoginScreen extends React.Component {
 
   _openApplication(){
     this._clearLoginData();
-    ScreenNavigation.goto('HomeScreen');
+    ScreenNavigation.goto('HomeScreen', {selectedDriver: null});
   }
 
 
@@ -130,7 +127,10 @@ export default class LoginScreen extends React.Component {
 
   render() {
     return (
-      <View style={{flex: 1, paddingTop: 20}}>
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <Text style={styles.titleText}>Login to your account</Text>
+        </View>
         <TextInput
           style={styles.input}
           ref={ input => { this.inputs['UsernameInput'] = input; }}
@@ -193,8 +193,19 @@ export default class LoginScreen extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 15,
-    backgroundColor: '#fff',
+  },
+  header:{
+    backgroundColor: Colors.tintColor,
+    marginBottom: 5,
+    height: 55,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  titleText: {
+    fontSize: 24,
+    padding: 5,
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
   input: {
     marginLeft: 15,

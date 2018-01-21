@@ -1,4 +1,5 @@
 const tintColor = '#FFD954';
+const userColor = '#4267B2';
 
 export default {
   tintColor,
