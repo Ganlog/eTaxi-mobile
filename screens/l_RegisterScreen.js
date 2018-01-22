@@ -95,6 +95,7 @@ export default class RegisterScreen extends React.Component {
 
   _register(username, firstName, lastName, email, password, matchingPassword, pricePerKilometer, serviceKind, manufactureYear, color, carModel, numberOfSeats) {
     this.setState({ isLoading: true})
+    console.log({ username: username, firstName: firstName, lastName: lastName, email: email, password: password, matchingPassword: matchingPassword, pricePerKilometer: pricePerKilometer, serviceKind: serviceKind, manufactureYear: manufactureYear, color: color, carModel: carModel, numberOfSeats: numberOfSeats });
     return fetch('http://85.255.11.29:8080/api/v1/users/'+this.state.userType+'Register', {
       method: 'POST',
       headers: {
@@ -104,6 +105,7 @@ export default class RegisterScreen extends React.Component {
     })
     .then((response) => response.json())
     .then((responseJson) => {
+      console.log(responseJson);
       if(responseJson.errors){
         let error, errors={}, regRespText;
         for(let i in responseJson.errors){
@@ -200,10 +202,11 @@ export default class RegisterScreen extends React.Component {
       <KeyboardAvoidingView style={styles.container} behavior='padding'>
         <View style={styles.header}>
           <Text style={styles.titleText}>Register as a {this.state.userType}</Text>
+          {this.state.isLoading ? ( <ActivityIndicator/> ) : (null)}
         </View>
         <ScrollView>
 
-
+          <Text style={styles.inputHeader}>Choose username:</Text>
           <TextInput
             style={styles.input}
             ref={ input => { this.inputs['UsernameInput'] = input; }}
@@ -212,34 +215,11 @@ export default class RegisterScreen extends React.Component {
             returnKeyType='next'
             autoCapitalize='none'
             blurOnSubmit={false}
-            onSubmitEditing={() => { this._focusNextField('FirstNameInput'); }}
-          />
-          {this.state.isLoading ? (<ActivityIndicator/>) : (<Text style={styles.error}>{this.state.errors.username}</Text>)}
-
-
-          <TextInput
-            style={styles.input}
-            ref={ input => { this.inputs['FirstNameInput'] = input; }}
-            onChangeText={firstName => this.setState({firstName})}
-            placeholder='First Name'
-            returnKeyType='next'
-            blurOnSubmit={false}
-            onSubmitEditing={() => { this._focusNextField('LastNameInput'); }}
-          />
-          {this.state.isLoading ? (<ActivityIndicator/>) : (<Text style={styles.error}>{this.state.errors.firstName}</Text>)}
-
-
-          <TextInput
-            style={styles.input}
-            ref={ input => { this.inputs['LastNameInput'] = input; }}
-            onChangeText={lastName => this.setState({lastName})}
-            placeholder='Last Name'
-            returnKeyType='next'
-            blurOnSubmit={false}
             onSubmitEditing={() => { this._focusNextField('EmailInput'); }}
           />
-          {this.state.isLoading ? (<ActivityIndicator/>) : (<Text style={styles.error}>{this.state.errors.lastName}</Text>)}
+          {this.state.errors.username ? (<Text style={styles.error}>Username {this.state.errors.username}</Text>) : (null)}
 
+          <Text style={styles.inputHeader}>Enter email:</Text>
           <TextInput
             style={styles.input}
             ref={ input => { this.inputs['EmailInput'] = input; }}
@@ -249,11 +229,152 @@ export default class RegisterScreen extends React.Component {
             autoCapitalize='none'
             returnKeyType='next'
             blurOnSubmit={false}
-            onSubmitEditing={() => { this._focusNextField('PasswordInput'); }}
+            onSubmitEditing={() => { this._focusNextField('FirstNameInput'); }}
           />
-          {this.state.isLoading ? (<ActivityIndicator/>) : (<Text style={styles.error}>{this.state.errors.email}</Text>)}
+          {this.state.errors.email ?(<Text style={styles.error}>Email {this.state.errors.email}</Text>) : (null)}
+
+          <Text style={styles.inputHeader}>Enter first and last name:</Text>
+          <View style={styles.flexContainer}>
+            <View style={{flexDirection:'row'}}>
+              <TextInput
+                style={{flex:0.5, height: 30, padding: 5}}
+                ref={ input => { this.inputs['FirstNameInput'] = input; }}
+                onChangeText={firstName => this.setState({firstName})}
+                placeholder='First Name'
+                returnKeyType='next'
+                blurOnSubmit={false}
+                onSubmitEditing={() => { this._focusNextField('LastNameInput'); }}
+              />
+
+              <TextInput
+                style={{flex:0.5, height: 30, padding: 5}}
+                ref={ input => { this.inputs['LastNameInput'] = input; }}
+                onChangeText={lastName => this.setState({lastName})}
+                placeholder='Last Name'
+                returnKeyType='next'
+                blurOnSubmit={false}
+                onSubmitEditing={() => { (this.state.userType == 'driver') ? (this._focusNextField('CarModelInput')) : (this._focusNextField('PasswordInput')) }}
+              />
+
+            </View>
+          </View>
+          {this.state.errors.firstName ? (<Text style={styles.error}>First Name {this.state.errors.firstName}</Text>) : (null)}
+          {this.state.errors.lastName ? (<Text style={styles.error}>Last Name {this.state.errors.lastName}</Text>) : (null)}
 
 
+
+          {(this.state.userType == 'driver') ? (<View>
+
+
+                <Text style={styles.inputHeader}>Enter informations about car:</Text>
+                  <View style={styles.flexContainer}>
+                    <View style={{flexDirection:'row'}}>
+
+                        <TextInput
+                          style={{flex:0.5, height: 30, padding: 5}}
+                          ref={ input => { this.inputs['CarModelInput'] = input; }}
+                          onChangeText={carModel => this.setState({carModel})}
+                          placeholder='Car model'
+                          returnKeyType='next'
+                          blurOnSubmit={false}
+                          onSubmitEditing={() => { this._focusNextField('ManufactureYearInput'); }}
+                        />
+
+
+                        <TextInput
+                          style={{flex:0.5, height: 30, padding: 5}}
+                          ref={ input => { this.inputs['ManufactureYearInput'] = input; }}
+                          onChangeText={manufactureYear => this.setState({manufactureYear})}
+                          placeholder='Car manufacture year'
+                          keyboardType='numeric'
+                          returnKeyType='next'
+                          blurOnSubmit={false}
+                          onSubmitEditing={() => { this._focusNextField('ColorInput'); }}
+                        />
+
+                    </View>
+                  </View>
+
+                  <View style={styles.flexContainer}>
+                    <View style={{flexDirection:'row'}}>
+                        <TextInput
+                          style={{flex:0.5, height: 30, padding: 5}}
+                          ref={ input => { this.inputs['ColorInput'] = input; }}
+                          onChangeText={color => this.setState({color})}
+                          placeholder='Car color'
+                          autoCapitalize='none'
+                          returnKeyType='next'
+                          blurOnSubmit={false}
+                          onSubmitEditing={() => { this._focusNextField('NumberOfSeatsInput'); }}
+                        />
+
+                        <TextInput
+                          style={{flex:0.5, height: 30, padding: 5}}
+                          ref={ input => { this.inputs['NumberOfSeatsInput'] = input; }}
+                          onChangeText={numberOfSeats => this.setState({numberOfSeats})}
+                          placeholder='Number of seats in car'
+                          keyboardType='numeric'
+                          returnKeyType='next'
+                          blurOnSubmit={false}
+                          onSubmitEditing={() => { this._focusNextField('PricePerKilometerInput'); }}
+                        />
+
+                    </View>
+                  </View>
+                    {(this.state.errors.carModel) ? (<Text style={styles.error}>Car model {this.state.errors.carModel}</Text>) : (null)}
+                    {(this.state.errors.manufactureYear) ? (<Text style={styles.error}>Car manufacture year {this.state.errors.manufactureYear}</Text>) : (null)}
+                    {(this.state.errors.color) ? (<Text style={styles.error}>Car color {this.state.errors.color}</Text>) : (null)}
+                    {(this.state.errors.numberOfSeats) ? (<Text style={styles.error}>Number of seats {this.state.errors.numberOfSeats}</Text>) : (null)}
+
+
+                  <Text style={styles.inputHeader}>Enter service type and price:</Text>
+
+                  <View style={styles.flexContainer}>
+                    <View style={{flexDirection:'row'}}>
+
+                      <Picker
+                        style={{flex:0.52, height: 30, padding: 5}}
+                        selectedValue={this.state.serviceKind}
+                        onValueChange={(itemValue, itemIndex) => this.setState({serviceKind: itemValue})}>
+                        <Picker.Item label='Premium' value='PREMIUM' />
+                        <Picker.Item label='Standard' value='STANDARD' />
+                      </Picker>
+
+                      <TextInput
+                        style={{flex:0.34, height: 30, padding: 5}}
+                        ref={ input => { this.inputs['PricePerKilometerInput'] = input; }}
+                        onChangeText={pricePerKilometer => this.setState({pricePerKilometer})}
+                        placeholder='Price per kilometer'
+                        keyboardType='numeric'
+                        returnKeyType='next'
+                        blurOnSubmit={false}
+                        onSubmitEditing={() => { this._focusNextField('PricePerKilometerInput2'); }}
+                      />
+
+                      <Text style={{height: 30, lineHeight: 30}}>.</Text>
+
+                      <TextInput
+                        style={{flex:0.14, height: 30, padding: 5}}
+                        ref={ input => { this.inputs['PricePerKilometerInput2'] = input; }}
+                        onChangeText={pricePerKilometer2 => this.setState({pricePerKilometer2})}
+                        placeholder='decimal'
+                        keyboardType='numeric'
+                        returnKeyType='next'
+                        blurOnSubmit={false}
+                        onSubmitEditing={() => { this._focusNextField('PasswordInput'); }}
+                      />
+
+                    </View>
+                  </View>
+                  {(this.state.errors.pricePerKilometer) ? (<Text style={styles.error}>Price per kilometer {this.state.errors.pricePerKilometer}</Text>) : (null)}
+
+
+          </View>) : (null) }
+
+
+
+
+          <Text style={styles.inputHeader}>Enter password:</Text>
           <TextInput
             style={styles.input}
             ref={ input => { this.inputs['PasswordInput'] = input; }}
@@ -265,7 +386,7 @@ export default class RegisterScreen extends React.Component {
             blurOnSubmit={false}
             onSubmitEditing={() => { this._focusNextField('MatchPassInput'); }}
           />
-          {this.state.isLoading ? (<ActivityIndicator/>) : (<Text style={styles.error}>{this.state.errors.password}</Text>)}
+          {this.state.errors.password ? (<Text style={styles.error}>Password {this.state.errors.password}</Text>) : (null)}
 
 
           <TextInput
@@ -276,128 +397,11 @@ export default class RegisterScreen extends React.Component {
             autoCapitalize='none'
             returnKeyType={ (this.state.userType == 'user') ? 'done' : 'next' }
             secureTextEntry={true}
-            blurOnSubmit={ (this.state.userType == 'user') ? true : false }
-            onSubmitEditing={() => { (this.state.userType == 'user') ? (Keyboard.dismiss) : (this._focusNextField('PricePerKilometerInput')) }}
+            blurOnSubmit={true}
           />
-          {this.state.isLoading ? (
-            <ActivityIndicator/>
-          ) : (
+          {(this.state.errors.userDTO || this.state.errors.driverDTO) ? (
             (this.state.userType == 'user') ? (<Text style={styles.error}>{this.state.errors.userDTO}</Text>) : (<Text style={styles.error}>{this.state.errors.driverDTO}</Text>)
-          )}
-
-
-                {(this.state.userType == 'driver') ? (
-                  <View style={{flex:1, justifyContent:'flex-end', marginLeft: 15, marginRight: 15, height: 40, borderWidth: 1}}>
-                    <View style={{flexDirection:'row'}}>
-                      <TextInput
-                        style={{flex:0.5, height: 40, padding: 5}}
-                        ref={ input => { this.inputs['PricePerKilometerInput'] = input; }}
-                        onChangeText={pricePerKilometer => this.setState({pricePerKilometer})}
-                        placeholder='Price per kilometer'
-                        keyboardType='numeric'
-                        returnKeyType='next'
-                        blurOnSubmit={false}
-                        onSubmitEditing={() => { this._focusNextField('PricePerKilometerInput2'); }}
-                      />
-
-                      <Text style={{height: 40, lineHeight: 40}}>.</Text>
-
-                      <TextInput
-                        style={{flex:0.5, height: 40, padding: 5}}
-                        ref={ input => { this.inputs['PricePerKilometerInput2'] = input; }}
-                        onChangeText={pricePerKilometer2 => this.setState({pricePerKilometer2})}
-                        placeholder='decimal'
-                        keyboardType='numeric'
-                        returnKeyType='next'
-                        blurOnSubmit={false}
-                        onSubmitEditing={() => { this._focusNextField('ManufactureYearInput'); }}
-                      />
-                    </View>
-                  </View>
-                ) : (null) }
-                {(this.state.userType == 'driver') ? (
-                  (this.state.isLoading) ? (<ActivityIndicator/>) : (<Text style={styles.error}>{this.state.errors.pricePerKilometer}</Text>)
-                ) : (null) }
-
-
-
-                {(this.state.userType == 'driver') ? (
-                  <TextInput
-                    style={styles.input}
-                    ref={ input => { this.inputs['ManufactureYearInput'] = input; }}
-                    onChangeText={manufactureYear => this.setState({manufactureYear})}
-                    placeholder='Car manufacture year'
-                    keyboardType='numeric'
-                    returnKeyType='next'
-                    blurOnSubmit={false}
-                    onSubmitEditing={() => { this._focusNextField('ColorInput'); }}
-                  />
-                ) : (null) }
-                {(this.state.userType == 'driver') ? (
-                  (this.state.isLoading) ? (<ActivityIndicator/>) : (<Text style={styles.error}>{this.state.errors.manufactureYear}</Text>)
-                ) : (null) }
-
-
-                {(this.state.userType == 'driver') ? (
-                  <TextInput
-                    style={styles.input}
-                    ref={ input => { this.inputs['ColorInput'] = input; }}
-                    onChangeText={color => this.setState({color})}
-                    placeholder='Car color'
-                    autoCapitalize='none'
-                    returnKeyType='next'
-                    blurOnSubmit={false}
-                    onSubmitEditing={() => { this._focusNextField('CarModelInput'); }}
-                  />
-                ) : (null) }
-                {(this.state.userType == 'driver') ? (
-                  (this.state.isLoading) ? (<ActivityIndicator/>) : (<Text style={styles.error}>{this.state.errors.color}</Text>)
-                ) : (null) }
-
-
-                {(this.state.userType == 'driver') ? (
-                  <TextInput
-                    style={styles.input}
-                    ref={ input => { this.inputs['CarModelInput'] = input; }}
-                    onChangeText={carModel => this.setState({carModel})}
-                    placeholder='Car model'
-                    returnKeyType='next'
-                    blurOnSubmit={false}
-                    onSubmitEditing={() => { this._focusNextField('NumberOfSeatsInput'); }}
-                  />
-                ) : (null) }
-                {(this.state.userType == 'driver') ? (
-                  (this.state.isLoading) ? (<ActivityIndicator/>) : (<Text style={styles.error}>{this.state.errors.carModel}</Text>)
-                ) : (null) }
-
-
-                {(this.state.userType == 'driver') ? (
-                  <TextInput
-                    style={styles.input}
-                    ref={ input => { this.inputs['NumberOfSeatsInput'] = input; }}
-                    onChangeText={numberOfSeats => this.setState({numberOfSeats})}
-                    placeholder='Number of seats in car'
-                    keyboardType='numeric'
-                    returnKeyType='done'
-                    blurOnSubmit={true}
-                  />
-                ) : (null) }
-                {(this.state.userType == 'driver') ? (
-                  (this.state.isLoading) ? (<ActivityIndicator/>) : (<Text style={styles.error}>{this.state.errors.numberOfSeats}</Text>)
-                ) : (null) }
-
-
-                {(this.state.userType == 'driver') ? (
-                  <View>
-                    <Text>Kind of service:</Text>
-                    <Picker
-                      selectedValue={this.state.serviceKind}
-                      onValueChange={(itemValue, itemIndex) => this.setState({serviceKind: itemValue})}>
-                      <Picker.Item label='Premium' value='PREMIUM' />
-                      <Picker.Item label='Standard' value='STANDARD' />
-                    </Picker>
-                  </View>
-                ) : (null) }
+          ) : (null) }
 
 
           {(this.state.userType == 'user') ? (
@@ -491,12 +495,25 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
   },
+  flexContainer: {
+    flex:1,
+    justifyContent:'flex-end',
+    marginLeft: 15,
+    marginRight: 15,
+    height: 30,
+  },
+  inputHeader: {
+    fontWeight: 'bold',
+    marginLeft: 10,
+    marginTop: 5,
+  },
   input: {
     marginLeft: 15,
     marginRight: 15,
+    marginTop: 0,
+    marginBottom: 0,
     padding: 5,
-    height: 30,
-    borderWidth: 1
+    height: 30
   },
   error: {
     color: 'red',

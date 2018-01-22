@@ -181,6 +181,7 @@ export default class HomeScreen extends React.Component {
     })
     .then((response) => response.json())
     .then((responseJson) => {
+      console.log(responseJson);
       UserInfo.storeParam('locationTagID', responseJson.id.toString());
       this.setState({
         instruction: (UserInfo.userType == 'driver') ? 'Waiting for user to choose your offer...' : 'Select driver of your choice and confirm',
@@ -224,6 +225,7 @@ export default class HomeScreen extends React.Component {
     })
     .then((response) => response.json())
     .then((tags) => {
+      console.log(tags);
       for (i in tags){
         if(tags[i].user.role[0].role == 'DRIVER_USER'){
           let tag = {

@@ -59,6 +59,7 @@ export default class LoginScreen extends React.Component {
     })
     .then((response) => response.json())
     .then((responseJson) => {
+      console.log(responseJson);
       if(responseJson.error){
         this.setState({
           response: <Text style={{ color: 'red' }}>{responseJson.error}</Text>,
@@ -76,6 +77,7 @@ export default class LoginScreen extends React.Component {
         })
         .then((response) => response.json())
         .then((resp) => {
+          console.log(resp);
           if(resp.error){
             this.setState({
               response: <Text style={{ color: 'red' }}>{resp.error}</Text>,
@@ -130,6 +132,7 @@ export default class LoginScreen extends React.Component {
       <View style={styles.container}>
         <View style={styles.header}>
           <Text style={styles.titleText}>Login to your account</Text>
+          {this.state.isLoading ? ( <ActivityIndicator/> ) : (null)}
         </View>
         <TextInput
           style={styles.input}
@@ -153,18 +156,15 @@ export default class LoginScreen extends React.Component {
           blurOnSubmit={false}
           onSubmitEditing={Keyboard.dismiss}
         />
+        <View style={{ height: 20 }} />
         <Button
           onPress={() => this._login(this.state.username, this.state.password)}
           title='Login'
           color={Colors.tintColor}
         />
 
+        {this.state.response ? (<Text style={styles.alignCenter}>{this.state.response}</Text>) : (null)}
 
-        {this.state.isLoading ? (
-          <ActivityIndicator/>
-        ) : (
-          <Text style={styles.alignCenter}>{this.state.response}</Text>
-        )}
 
         {this.state.loginSuccess ? (
           <View>
@@ -214,7 +214,6 @@ const styles = StyleSheet.create({
     marginBottom: 5,
     padding: 5,
     height: 30,
-    borderWidth: 1
   },
   alignCenter: {
     textAlign: 'center',

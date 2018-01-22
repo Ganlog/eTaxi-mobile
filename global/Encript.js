@@ -6,7 +6,7 @@ export default {
     let output = '';
 
     for (
-      let block = 0, charCode, i = 0, map = this.chars;
+      let block = 0, charCode, i = 0, map = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
       str.charAt(i | 0) || ((map = '='), i % 1);
       output += map.charAt(63 & (block >> (8 - i % 1 * 8)))
     ) {
