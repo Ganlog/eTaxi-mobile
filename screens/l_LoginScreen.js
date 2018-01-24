@@ -62,7 +62,7 @@ export default class LoginScreen extends React.Component {
       console.log(responseJson);
       if(responseJson.error){
         this.setState({
-          response: <Text style={{ color: 'red' }}>{responseJson.error}</Text>,
+          response: <Text style={{ color: 'red' }}>{(responseJson.error == 'Unauthorized') ? ("Podano błedne dane logowania") : (responseJson.error)}</Text>,
           isLoading: false,
         });
       }
@@ -80,10 +80,11 @@ export default class LoginScreen extends React.Component {
           console.log(resp);
           if(resp.error){
             this.setState({
-              response: <Text style={{ color: 'red' }}>{resp.error}</Text>,
+              response: <Text style={{ color: 'red' }}>{(resp.error == 'Unauthorized') ? ("Podano błedne dane logowania") : (resp.error)}</Text>,
             });
           }
           else{
+            UserInfo.storeParam('id', resp.id.toString());
             UserInfo.storeParam('token', hashedCredentials);
             UserInfo.storeParam('avatar', resp.avatar.image);
             UserInfo.storeParam('userType', (resp.role[0].role == 'STANDARD_USER') ? 'user' : (resp.role[0].role == 'DRIVER_USER') ? 'driver' : 'admin');
@@ -101,7 +102,7 @@ export default class LoginScreen extends React.Component {
               UserInfo.storeParam('numberOfSeats',  resp.numberOfSeats.toString());
             }
             this.setState({
-              response: 'Successfully logged in',
+              response: 'Pomyslnie zalogowano',
               loginSuccess: true,
               isLoading: false,
               registerSuccess: true
@@ -131,14 +132,14 @@ export default class LoginScreen extends React.Component {
     return (
       <View style={styles.container}>
         <View style={styles.header}>
-          <Text style={styles.titleText}>Login to your account</Text>
+          <Text style={styles.titleText}>Zaloguj się na swoje konto</Text>
           {this.state.isLoading ? ( <ActivityIndicator/> ) : (null)}
         </View>
         <TextInput
           style={styles.input}
           ref={ input => { this.inputs['UsernameInput'] = input; }}
           onChangeText={username => this.setState({username})}
-          placeholder='Full Name'
+          placeholder='Login'
           autoCapitalize='none'
           keyboardType='default'
           returnKeyType='next'
@@ -149,7 +150,7 @@ export default class LoginScreen extends React.Component {
           style={styles.input}
           ref={ input => { this.inputs['PasswordInput'] = input; }}
           onChangeText={password => this.setState({password})}
-          placeholder='Password'
+          placeholder='Hasło'
           autoCapitalize='none'
           returnKeyType='done'
           secureTextEntry={true}
@@ -159,7 +160,7 @@ export default class LoginScreen extends React.Component {
         <View style={{ height: 20 }} />
         <Button
           onPress={() => this._login(this.state.username, this.state.password)}
-          title='Login'
+          title='Zaloguj się'
           color={Colors.tintColor}
         />
 
@@ -171,7 +172,7 @@ export default class LoginScreen extends React.Component {
             <View style={{margin: 5}} />
             <Button
               onPress={() => this._openApplication()}
-              title='Open Application'
+              title='Przejdź do aplikacji'
               color={Colors.tintColor}
             />
           </View>) : ( null )

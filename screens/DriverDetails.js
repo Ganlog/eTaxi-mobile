@@ -26,7 +26,7 @@ export default class HomeScreen extends React.Component {
   }
 
   _selectDriver(){
-    ScreenNavigation.goto('HomeScreen', {selectedDriver: this.state.driverInfo.id});
+    ScreenNavigation.goto('HomeScreen', {selectedDriver: this.state.driverInfo.socketSessionId});
   }
 
   _goBack(){

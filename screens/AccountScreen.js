@@ -30,29 +30,29 @@ export default class AccountScreen extends React.Component {
     return (
       <View style={styles.container}>
         <View style={styles.header}>
-          <Text style={styles.titleText}>Your {UserInfo.userType} account details</Text>
+          <Text style={styles.titleText}>Twój profil {(UserInfo.userType == 'driver') ? ('kierowcy') : (UserInfo.userType == 'user') ? ('pasażera') : UserInfo.userType }</Text>
         </View>
 
-        <Text><Text style={styles.bold}> Username: </Text> {UserInfo.username}</Text>
-        <Text><Text style={styles.bold}> First name: </Text> {UserInfo.firstName}</Text>
-        <Text><Text style={styles.bold}> Last name: </Text> {UserInfo.lastName}</Text>
+        <Text><Text style={styles.bold}> Login: </Text> {UserInfo.username}</Text>
+        <Text><Text style={styles.bold}> Imię: </Text> {UserInfo.firstName}</Text>
+        <Text><Text style={styles.bold}> Nazwisko: </Text> {UserInfo.lastName}</Text>
         <Text><Text style={styles.bold}> Email: </Text> {UserInfo.email}</Text>
 
         {(UserInfo.userType == 'driver') ? (
           <View>
-            <Text><Text style={styles.bold}> Price per kilometer: </Text> {UserInfo.pricePerKilometer}</Text>
-            <Text><Text style={styles.bold}> Kind of service: </Text> {UserInfo.serviceKind}</Text>
-            <Text><Text style={styles.bold}> Car manufacture year: </Text> {UserInfo.manufactureYear}</Text>
-            <Text><Text style={styles.bold}> Color: </Text> {UserInfo.color}</Text>
-            <Text><Text style={styles.bold}> Car Model: </Text> {UserInfo.carModel}</Text>
-            <Text><Text style={styles.bold}> Number of Seats: </Text> {UserInfo.numberOfSeats}</Text>
+            <Text><Text style={styles.bold}> Cena za kilometr: </Text> {UserInfo.pricePerKilometer}</Text>
+            <Text><Text style={styles.bold}> Rodaj usługi: </Text> {UserInfo.serviceKind}</Text>
+            <Text><Text style={styles.bold}> Rok produkcji samochodu: </Text> {UserInfo.manufactureYear}</Text>
+            <Text><Text style={styles.bold}> Kolor: </Text> {UserInfo.color}</Text>
+            <Text><Text style={styles.bold}> Model samochodu: </Text> {UserInfo.carModel}</Text>
+            <Text><Text style={styles.bold}> Liczba siedzeń: </Text> {UserInfo.numberOfSeats}</Text>
           </View>
         ) : (null) }
 
         <View style={{ height: 15 }} />
         <Button
           onPress={() => this._logout() }
-          title='Logout'
+          title='Wyloguj się'
           color={'red'}
         />
       </View>

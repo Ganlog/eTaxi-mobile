@@ -11,13 +11,13 @@ import LoginScreensNavigator from './LoginScreensNavigator';
 
 export default TabNavigator(
   {
-    Home: {
+    'Strona startowa': {
       screen: LoginScreensNavigator,
     },
-    About: {
+    'O aplikacji': {
       screen: AboutScreen,
     },
-    Account: {
+    'Informacje o koncie': {
       screen: AccountScreen,
     },
   },
@@ -31,13 +31,13 @@ export default TabNavigator(
         const { routeName } = navigation.state;
         let iconName;
         switch (routeName) {
-          case 'Home':
+          case 'Strona startowa':
             iconName = Platform.OS === 'ios' ? `ios-home${focused ? '' : '-outline'}` : 'md-home';
             break;
-          case 'About':
+          case 'O aplikacji':
             iconName = Platform.OS === 'ios' ? `ios-information-circle${focused ? '' : '-outline'}` : 'md-information-circle';
             break;
-          case 'Account':
+          case 'Informacje o koncie':
            iconName = Platform.OS === 'ios' ? `ios-person${focused ? '' : '-outline'}` : 'md-person';
         }
         return (

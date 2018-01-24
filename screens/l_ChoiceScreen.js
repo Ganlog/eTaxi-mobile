@@ -25,23 +25,23 @@ export default class LoginScreen extends React.Component {
     return (
       <View style={styles.container}>
         <View style={styles.header}>
-          <Text style={styles.titleText}>Login or register</Text>
+          <Text style={styles.titleText}>Zaloguj się lub zarejestruj konto</Text>
         </View>
         <Button
           onPress={() => ScreenNavigation.goto('l_LoginScreen')}
-          title='Log in'
+          title='Zaloguj się'
           color={Colors.tintColor}
         />
         <View style={{margin: 5}} />
         <Button
           onPress={() => ScreenNavigation.goto('l_RegisterScreen', {userType: 'user'})}
-          title='Register as user'
+          title='Zarejestruj się jako pasażer'
           color={Colors.tintColor}
         />
         <View style={{margin: 5}} />
         <Button
           onPress={() => ScreenNavigation.goto('l_RegisterScreen', {userType: 'driver'})}
-          title='Register as driver'
+          title='Zarejestruj się jako kierowca'
           color={Colors.tintColor}
         />
       </View>

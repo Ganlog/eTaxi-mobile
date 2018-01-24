@@ -123,7 +123,7 @@ export default class RegisterScreen extends React.Component {
       }
       else if(responseJson.message) {
         this.setState({
-          regRespText: responseJson.message,
+          regRespText: 'Email został pomyslnie wysłany. Sprawdź pocztę',
           regTokenReceived: responseJson.token,
           errors: [],
           isLoading: false,
@@ -162,7 +162,8 @@ export default class RegisterScreen extends React.Component {
         UserInfo.storeParam('email', this.state.email);
 
         if(this.state.userType == 'driver'){
-          UserInfo.storeParam('pricePerKilometer', this.state.pricePerKilometer+'.'+this.state.pricePerKilometer2);
+          let price = (this.state.pricePerKilometer) ? (this.state.pricePerKilometer+'.'+this.state.pricePerKilometer2) : (null);
+          UserInfo.storeParam('pricePerKilometer', price);
           UserInfo.storeParam('serviceKind', this.state.serviceKind.toLowerCase());
           UserInfo.storeParam('manufactureYear', this.state.manufactureYear);
           UserInfo.storeParam('color', this.state.color);
@@ -170,7 +171,7 @@ export default class RegisterScreen extends React.Component {
           UserInfo.storeParam('numberOfSeats', this.state.numberOfSeats);
         }
         this.setState({
-          regRespText: 'Successfully registered',
+          regRespText: 'Pomyślnie zarejestrowano',
           isLoading: false,
           errors: [],
           registerSuccess: true
@@ -181,6 +182,14 @@ export default class RegisterScreen extends React.Component {
       console.error(error);
     });
   };
+
+
+  _TranslMayNotEmp(string){
+    return (string == 'may not be empty') ? 'nie może pozostać puste' : string;
+  }
+  _translPassDontMatch(string){
+    return (string == "Passwords don't match") ? 'Podane hasła różnią się od siebie' : string;
+  }
 
 
   _openApplication(){
@@ -201,25 +210,25 @@ export default class RegisterScreen extends React.Component {
     return (
       <KeyboardAvoidingView style={styles.container} behavior='padding'>
         <View style={styles.header}>
-          <Text style={styles.titleText}>Register as a {this.state.userType}</Text>
+          <Text style={styles.titleText}>Zarejestruj sie jako {(this.state.userType == 'driver') ? ('kierowca') : (this.state.userType == 'user') ? ('pasażer') : this.state.userType }</Text>
           {this.state.isLoading ? ( <ActivityIndicator/> ) : (null)}
         </View>
         <ScrollView>
 
-          <Text style={styles.inputHeader}>Choose username:</Text>
+          <Text style={styles.inputHeader}>Podaj login:</Text>
           <TextInput
             style={styles.input}
             ref={ input => { this.inputs['UsernameInput'] = input; }}
             onChangeText={username => this.setState({username})}
-            placeholder='Username'
+            placeholder='Login'
             returnKeyType='next'
             autoCapitalize='none'
             blurOnSubmit={false}
             onSubmitEditing={() => { this._focusNextField('EmailInput'); }}
           />
-          {this.state.errors.username ? (<Text style={styles.error}>Username {this.state.errors.username}</Text>) : (null)}
+          {this.state.errors.username ? (<Text style={styles.error}>Pole Login {this._TranslMayNotEmp(this.state.errors.username)}</Text>) : (null)}
 
-          <Text style={styles.inputHeader}>Enter email:</Text>
+          <Text style={styles.inputHeader}>Podaj adres email:</Text>
           <TextInput
             style={styles.input}
             ref={ input => { this.inputs['EmailInput'] = input; }}
@@ -231,16 +240,16 @@ export default class RegisterScreen extends React.Component {
             blurOnSubmit={false}
             onSubmitEditing={() => { this._focusNextField('FirstNameInput'); }}
           />
-          {this.state.errors.email ?(<Text style={styles.error}>Email {this.state.errors.email}</Text>) : (null)}
+          {this.state.errors.email ?(<Text style={styles.error}>Pole Email {(this.state.errors.email == 'not a well-formed email address') ? ('ma niepoprawną strukturę') : this._TranslMayNotEmp(this.state.errors.email)}</Text>) : (null)}
 
-          <Text style={styles.inputHeader}>Enter first and last name:</Text>
+          <Text style={styles.inputHeader}>Podaj imię i nazwisko:</Text>
           <View style={styles.flexContainer}>
             <View style={{flexDirection:'row'}}>
               <TextInput
                 style={{flex:0.5, height: 30, padding: 5}}
                 ref={ input => { this.inputs['FirstNameInput'] = input; }}
                 onChangeText={firstName => this.setState({firstName})}
-                placeholder='First Name'
+                placeholder='Imię'
                 returnKeyType='next'
                 blurOnSubmit={false}
                 onSubmitEditing={() => { this._focusNextField('LastNameInput'); }}
@@ -250,7 +259,7 @@ export default class RegisterScreen extends React.Component {
                 style={{flex:0.5, height: 30, padding: 5}}
                 ref={ input => { this.inputs['LastNameInput'] = input; }}
                 onChangeText={lastName => this.setState({lastName})}
-                placeholder='Last Name'
+                placeholder='Nazwisko'
                 returnKeyType='next'
                 blurOnSubmit={false}
                 onSubmitEditing={() => { (this.state.userType == 'driver') ? (this._focusNextField('CarModelInput')) : (this._focusNextField('PasswordInput')) }}
@@ -258,15 +267,15 @@ export default class RegisterScreen extends React.Component {
 
             </View>
           </View>
-          {this.state.errors.firstName ? (<Text style={styles.error}>First Name {this.state.errors.firstName}</Text>) : (null)}
-          {this.state.errors.lastName ? (<Text style={styles.error}>Last Name {this.state.errors.lastName}</Text>) : (null)}
+          {this.state.errors.firstName ? (<Text style={styles.error}>Pole imię {this._TranslMayNotEmp(this.state.errors.firstName)}</Text>) : (null)}
+          {this.state.errors.lastName ? (<Text style={styles.error}>Pole nazwisko {this._TranslMayNotEmp(this.state.errors.lastName)}</Text>) : (null)}
 
 
 
           {(this.state.userType == 'driver') ? (<View>
 
 
-                <Text style={styles.inputHeader}>Enter informations about car:</Text>
+                <Text style={styles.inputHeader}>Podaj informacje o samochodzie:</Text>
                   <View style={styles.flexContainer}>
                     <View style={{flexDirection:'row'}}>
 
@@ -274,7 +283,7 @@ export default class RegisterScreen extends React.Component {
                           style={{flex:0.5, height: 30, padding: 5}}
                           ref={ input => { this.inputs['CarModelInput'] = input; }}
                           onChangeText={carModel => this.setState({carModel})}
-                          placeholder='Car model'
+                          placeholder='Model samochodu'
                           returnKeyType='next'
                           blurOnSubmit={false}
                           onSubmitEditing={() => { this._focusNextField('ManufactureYearInput'); }}
@@ -285,7 +294,7 @@ export default class RegisterScreen extends React.Component {
                           style={{flex:0.5, height: 30, padding: 5}}
                           ref={ input => { this.inputs['ManufactureYearInput'] = input; }}
                           onChangeText={manufactureYear => this.setState({manufactureYear})}
-                          placeholder='Car manufacture year'
+                          placeholder='Rok produkcji'
                           keyboardType='numeric'
                           returnKeyType='next'
                           blurOnSubmit={false}
@@ -301,7 +310,7 @@ export default class RegisterScreen extends React.Component {
                           style={{flex:0.5, height: 30, padding: 5}}
                           ref={ input => { this.inputs['ColorInput'] = input; }}
                           onChangeText={color => this.setState({color})}
-                          placeholder='Car color'
+                          placeholder='Kolor'
                           autoCapitalize='none'
                           returnKeyType='next'
                           blurOnSubmit={false}
@@ -312,7 +321,7 @@ export default class RegisterScreen extends React.Component {
                           style={{flex:0.5, height: 30, padding: 5}}
                           ref={ input => { this.inputs['NumberOfSeatsInput'] = input; }}
                           onChangeText={numberOfSeats => this.setState({numberOfSeats})}
-                          placeholder='Number of seats in car'
+                          placeholder='Liczba siedzeń'
                           keyboardType='numeric'
                           returnKeyType='next'
                           blurOnSubmit={false}
@@ -321,13 +330,13 @@ export default class RegisterScreen extends React.Component {
 
                     </View>
                   </View>
-                    {(this.state.errors.carModel) ? (<Text style={styles.error}>Car model {this.state.errors.carModel}</Text>) : (null)}
-                    {(this.state.errors.manufactureYear) ? (<Text style={styles.error}>Car manufacture year {this.state.errors.manufactureYear}</Text>) : (null)}
-                    {(this.state.errors.color) ? (<Text style={styles.error}>Car color {this.state.errors.color}</Text>) : (null)}
-                    {(this.state.errors.numberOfSeats) ? (<Text style={styles.error}>Number of seats {this.state.errors.numberOfSeats}</Text>) : (null)}
+                    {(this.state.errors.carModel) ? (<Text style={styles.error}>Pole model samochodu  {this._TranslMayNotEmp(this.state.errors.carModel)}</Text>) : (null)}
+                    {(this.state.errors.manufactureYear) ? (<Text style={styles.error}>Pole rok produkcji {this._TranslMayNotEmp(this.state.errors.manufactureYear)}</Text>) : (null)}
+                    {(this.state.errors.color) ? (<Text style={styles.error}>Pole kolor samochodu {this._TranslMayNotEmp(this.state.errors.color)}</Text>) : (null)}
+                    {(this.state.errors.numberOfSeats) ? (<Text style={styles.error}>Pole liczba siedzeń {this._TranslMayNotEmp(this.state.errors.numberOfSeats)}</Text>) : (null)}
 
 
-                  <Text style={styles.inputHeader}>Enter service type and price:</Text>
+                  <Text style={styles.inputHeader}>Podaje rodzaj usługi i cenę za kilometr:</Text>
 
                   <View style={styles.flexContainer}>
                     <View style={{flexDirection:'row'}}>
@@ -344,7 +353,7 @@ export default class RegisterScreen extends React.Component {
                         style={{flex:0.34, height: 30, padding: 5}}
                         ref={ input => { this.inputs['PricePerKilometerInput'] = input; }}
                         onChangeText={pricePerKilometer => this.setState({pricePerKilometer})}
-                        placeholder='Price per kilometer'
+                        placeholder='zł za kilometr'
                         keyboardType='numeric'
                         returnKeyType='next'
                         blurOnSubmit={false}
@@ -357,7 +366,7 @@ export default class RegisterScreen extends React.Component {
                         style={{flex:0.14, height: 30, padding: 5}}
                         ref={ input => { this.inputs['PricePerKilometerInput2'] = input; }}
                         onChangeText={pricePerKilometer2 => this.setState({pricePerKilometer2})}
-                        placeholder='decimal'
+                        placeholder='gr'
                         keyboardType='numeric'
                         returnKeyType='next'
                         blurOnSubmit={false}
@@ -366,7 +375,7 @@ export default class RegisterScreen extends React.Component {
 
                     </View>
                   </View>
-                  {(this.state.errors.pricePerKilometer) ? (<Text style={styles.error}>Price per kilometer {this.state.errors.pricePerKilometer}</Text>) : (null)}
+                  {(this.state.errors.pricePerKilometer) ? (<Text style={styles.error}>Pole cena za kilometer {this._TranslMayNotEmp(this.state.errors.pricePerKilometer)}</Text>) : (null)}
 
 
           </View>) : (null) }
@@ -374,33 +383,33 @@ export default class RegisterScreen extends React.Component {
 
 
 
-          <Text style={styles.inputHeader}>Enter password:</Text>
+          <Text style={styles.inputHeader}>Podaj hasło:</Text>
           <TextInput
             style={styles.input}
             ref={ input => { this.inputs['PasswordInput'] = input; }}
             onChangeText={password => this.setState({password})}
-            placeholder='Password'
+            placeholder='Hasło'
             autoCapitalize='none'
             returnKeyType='next'
             secureTextEntry={true}
             blurOnSubmit={false}
             onSubmitEditing={() => { this._focusNextField('MatchPassInput'); }}
           />
-          {this.state.errors.password ? (<Text style={styles.error}>Password {this.state.errors.password}</Text>) : (null)}
+          {this.state.errors.password ? (<Text style={styles.error}>Pole hasło {this._TranslMayNotEmp(this.state.errors.password)}</Text>) : (null)}
 
 
           <TextInput
             style={styles.input}
             ref={ input => { this.inputs['MatchPassInput'] = input; }}
             onChangeText={matchingPassword => this.setState({matchingPassword})}
-            placeholder='Repeat password'
+            placeholder='Powtórz hasło'
             autoCapitalize='none'
             returnKeyType={ (this.state.userType == 'user') ? 'done' : 'next' }
             secureTextEntry={true}
             blurOnSubmit={true}
           />
           {(this.state.errors.userDTO || this.state.errors.driverDTO) ? (
-            (this.state.userType == 'user') ? (<Text style={styles.error}>{this.state.errors.userDTO}</Text>) : (<Text style={styles.error}>{this.state.errors.driverDTO}</Text>)
+            (this.state.userType == 'user') ? (<Text style={styles.error}>{this._translPassDontMatch(this.state.errors.userDTO)}</Text>) : (<Text style={styles.error}>{this._translPassDontMatch(this.state.errors.driverDTO)}</Text>)
           ) : (null) }
 
 
@@ -416,7 +425,7 @@ export default class RegisterScreen extends React.Component {
                   this.state.matchingPassword
                 )
               }
-              title='Register user'
+              title='Zarejestruj jako pasażer'
               color={Colors.tintColor}
             />
           ) : (
@@ -437,7 +446,7 @@ export default class RegisterScreen extends React.Component {
                   this.state.numberOfSeats
                 )
               }
-              title='Register driver'
+              title='Zarejestruj jako kierowca'
               color={Colors.tintColor}
             />
           )}
@@ -448,7 +457,7 @@ export default class RegisterScreen extends React.Component {
           {this.state.regTokenReceived ? (
             <Button
               onPress={() => this._confirmRegistration()}
-              title='Confirm registration'
+              title='Potwierdź rejestracje'
               color={Colors.tintColor}
             />) : ( null )
           }
@@ -458,7 +467,7 @@ export default class RegisterScreen extends React.Component {
               <View style={{margin: 5}} />
               <Button
                 onPress={() => this._openApplication()}
-                title='Open Application'
+                title='Przejdź do aplikacji'
                 color={Colors.tintColor}
               />
             </View>) : ( null )

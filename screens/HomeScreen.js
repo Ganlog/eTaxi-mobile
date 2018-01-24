@@ -4,9 +4,10 @@ import { MapView } from 'expo';
 import Colors from '../constants/Colors';
 import UserInfo from '../global/UserInfo';
 import ScreenNavigation from '../global/ScreenNavigation';
-import SockJS from 'socket.io-client';
+import Socket from 'socket.io-client';
+import webstomp from 'webstomp-client';
 
-// import webstomp from 'webstomp-client';
+
 
 export default class HomeScreen extends React.Component {
   static navigationOptions = {
@@ -15,18 +16,22 @@ export default class HomeScreen extends React.Component {
 
 
   constructor(props) {
+    console.ignoredYellowBox = ['Setting a timer'];
     super(props);
     ScreenNavigation.setNavigate(this.props.navigation);
 
     if(!UserInfo.username)
       ScreenNavigation.goto('l_ChoiceScreen');
 
-
     this.state = {
-      instruction: 'Please select your current location',
-      yourLocation: null,
+      instruction: 'Podaj swoja przyblizoną lokalizację',
+      yourLocation: 'block',
+      receiverUser: '',
+      isConnected: false,
+      socketSessionId: '',
       confirmYourLocationBtn: false,
       removeYourLocationBtn: false,
+      socketSessionId: null,
       mapRegion: {
         latitude: 50.0686919,
         longitude: 19.9433782,
@@ -39,52 +44,21 @@ export default class HomeScreen extends React.Component {
     String.prototype.capitalize = function() {
       return this && this[0].toUpperCase() + this.slice(1);
     }
-
-
-    var sock = new SockJS('ws://85.255.11.29:8080/ws');
-    sock.onopen = function() {
-        console.log('open');
-        sock.send('test');
-    };
-
-    sock.onmessage = function(e) {
-        console.log('message', e.data);
-        sock.close();
-    };
-
-    sock.onclose = function() {
-        console.log('close');
-    };
-
-
-      // ws = webstomp.over( new WebSocket('ws://85.255.11.29:8080/ws'));
-      //
-      // ws.connect({}, function(frame) {
-    	// 	ws.subscribe('/user/queue/errors', function(message) {
-    	// 		alert('Socket error ' + message.body);
-    	// 	});
-      //
-    	// 	ws.subscribe('/user/queue/reply', function(message) {
-      //     console.log(message.body);
-    	// 	});
-      //
-      //   var data = JSON.stringify({
-      // 		'name' : $('#name').val()
-      // 	})
-      // 	ws.send('/message', {}, data);
-      //
-    	// }, function(error) {
-    	// 	alert('STOMP error ' + error);
-      //   console.log(error);
-    	// });
   }
 
 
+
+
+
+
+
+
+
   componentWillReceiveProps(props){
-    if(!UserInfo.locationTagID){
+    if(!UserInfo.selectedLocation){
       this.setState({
-        instruction: 'Please select your current location',
-        yourLocation: null,
+        instruction: 'Podaj swoja przybliżoną lokalizację',
+        yourLocation: 'block',
         confirmYourLocationBtn: false,
         removeYourLocationBtn: false,
         mapRegion: {
@@ -96,26 +70,35 @@ export default class HomeScreen extends React.Component {
         markers: []
       })
     }
-    if(props.navigation.state.params.selectedDriver)
-      this.setState({
-        instruction: 'Waiting for driver to accept...',
+    if(props.navigation.state.params.selectedDriver){
+      let driverSocketID = props.navigation.state.params.selectedDriver
+      this.socket.emit('taxiOrderRequest', {
+        receiverUser: driverSocketID,
+        latitude: this._fixLatOrLng(this.state.yourLocation.latlng.latitude),
+        longitude: this._fixLatOrLng(this.state.yourLocation.latlng.longitude)
       });
-    else
       this.setState({
-        instruction: 'Please select your current location',
+        instruction: 'Kierowca otrzymał twoją ofertę i zmierza w twoim kierunku',
       });
+    }
   }
+
+
+
+
+
+
+
 
 
   _handleMapRegionChange = mapRegion => {
     this.setState({ mapRegion });
   };
 
-
   _handlePress = press => {
     if(!this.state.yourLocation){
       let locationTag = {
-        title: 'Your location',
+        title: 'Twoja lokalizacja',
         draggable: true,
         color: (UserInfo.userType == 'driver') ? Colors.tintColor : '#4267B2',
         latlng: {
@@ -132,7 +115,6 @@ export default class HomeScreen extends React.Component {
     }
   };
 
-
   _handleDragEnd = drag => {
     let locationTag = {
       latlng: {
@@ -143,11 +125,10 @@ export default class HomeScreen extends React.Component {
 
     this.setState({
       yourLocation: locationTag,
-      instruction: 'Please confirm selected location',
+      instruction: 'Potwierdź zaznaczoną lokalizację',
       confirmYourLocationBtn: true,
     });
   }
-
 
   _fixLatOrLng(latOrlng){
     latOrlng = Number(latOrlng).toFixed(6).toString();
@@ -157,58 +138,87 @@ export default class HomeScreen extends React.Component {
   }
 
 
-  _confirmLocation(){
-    if(UserInfo.locationTagID){
-      fetch('http://85.255.11.29:8080/api/v1/geotags/'+UserInfo.locationTagID, {
-        method: 'DELETE',
-        headers: {
-          Authorization: 'Basic '+UserInfo.token
-        }
-      })
-    }
-    let data = {
-      name: 'LOCATION',
-      latitude: this._fixLatOrLng(this.state.yourLocation.latlng.latitude),
-      longitude: this._fixLatOrLng(this.state.yourLocation.latlng.longitude)
-    }
-    fetch('http://85.255.11.29:8080/api/v1/geotags', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: 'Basic '+UserInfo.token
-      },
-      body: JSON.stringify(data)
-    })
-    .then((response) => response.json())
-    .then((responseJson) => {
-      console.log(responseJson);
-      UserInfo.storeParam('locationTagID', responseJson.id.toString());
+
+
+
+
+
+
+
+  _enableToChooseLocation(){
+    this.socket = Socket('http://85.255.11.29:3001', {pingTimeout: 3000});
+    this.socket.on('recConnectionID', (data) => {
       this.setState({
-        instruction: (UserInfo.userType == 'driver') ? 'Waiting for user to choose your offer...' : 'Select driver of your choice and confirm',
-        confirmYourLocationBtn: false,
-        removeYourLocationBtn: true,
+        socketSessionId: data
       });
-      if(UserInfo.userType != 'driver'){
-        this._loadAllDriversLocations();
+    });
+    this.setState({
+      yourLocation: null,
+      isConnected: true
+    });
+
+    this.socket.on('topicReply', (data) => {
+      console.log('topicReply');
+      console.log(data);
+    });
+    this.socket.on('userQueueDriverConfirmation', (data) => {
+      let passenger = JSON.parse(data.body);
+      console.log(passenger.passengerId);
+      if(passenger.passengerId){
+        let tag = {
+          title: 'Twój pasażer',
+          draggable: false,
+          color: '#4267B2',
+          latlng: {
+            latitude: passenger.localization.latitude,
+            longitude: passenger.localization.longitude
+          },
+        }
+        this.state.markers.push(tag);
+        this.setState({
+          instruction: 'Pasażer wybrał twoją ofertę. Jego lokalizacja pojawiła się na mapie'
+        });
       }
-    })
-    .catch((error) => {
-      console.error(error);
+    });
+    this.socket.on('userQueuePassenger', (data) => {
+      console.log('userQueuePassenger');
+      console.log(data);
+    });
+    this.socket.on('userQueueErrors', (data) => {
+      console.log('userQueueErrors');
+      console.log(data);
     });
   }
 
+  _confirmLocation(){
+    this.socket.emit('taxiActivate', {
+      id: UserInfo.id,
+      socketSessionId: this.state.socketSessionId,
+      latitude: this._fixLatOrLng(this.state.yourLocation.latlng.latitude),
+      longitude: this._fixLatOrLng(this.state.yourLocation.latlng.longitude)
+    });
+    UserInfo.storeParam('selectedLocation', 'true');
+
+    this.setState({
+      instruction: (UserInfo.userType == 'driver') ? 'Oczekiwanie na akceptacje oferty przez pasażera...' : 'Zaznacz wybranego kierowcę i potwierdź wybór',
+      confirmYourLocationBtn: false,
+      removeYourLocationBtn: true,
+    });
+    if(UserInfo.userType != 'driver'){
+      this._loadAllDriversLocations();
+    }
+  }
 
   _removeLocation(){
-    fetch('http://85.255.11.29:8080/api/v1/geotags/'+UserInfo.locationTagID, {
-      method: 'DELETE',
-      headers: {
-        Authorization: 'Basic '+UserInfo.token
-      }
-    })
-    UserInfo.storeParam('locationTagID', null);
+    this.socket.emit('taxiDeactivate', {
+      id: UserInfo.id,
+      socketSessionId: this.state.socketSessionId
+    });
+    UserInfo.storeParam('selectedLocation', null);
+    this.socket.close();
     this.setState({
-      instruction: 'Please select your current location',
-      yourLocation: null,
+      instruction: 'Podaj swoja przyblizoną lokalizację',
+      yourLocation: 'block',
       confirmYourLocationBtn: false,
       removeYourLocationBtn: false,
       markers: []
@@ -230,7 +240,7 @@ export default class HomeScreen extends React.Component {
         if(tags[i].user.role[0].role == 'DRIVER_USER'){
           let tag = {
             title: tags[i].user.firstName + ' ' + tags[i].user.lastName,
-            description: 'Click for more info',
+            description: 'Wyświetl więcej informacji',
             driverInfo: tags[i].user,
             draggable: false,
             color: Colors.tintColor,
@@ -260,11 +270,13 @@ export default class HomeScreen extends React.Component {
 
 
 
+
+
   render() {
     return (
       <View style={styles.container}>
         <View style={styles.header}>
-          <Text style={styles.titleText}>{(UserInfo.userType) ? UserInfo.userType.capitalize() : ''} Panel</Text>
+          <Text style={styles.titleText}>Panel {(UserInfo.userType == 'driver') ? ('Kierowcy') : (UserInfo.userType == 'user') ? ('Pasażera') : UserInfo.userType} </Text>
           <Text style={styles.instruction}> {this.state.instruction} </Text>
         </View>
         <ScrollView>
@@ -290,25 +302,28 @@ export default class HomeScreen extends React.Component {
             </MapView>
           </View>
 
+          {(this.state.yourLocation == 'block') ? (
+            <Button
+              onPress={() => this._enableToChooseLocation() }
+              title='Kliknij tu jeśli chcesz podać swoją lokalizacje'
+              color={Colors.tintColor}
+            />
+          ) : (null) }
+
           {(this.state.confirmYourLocationBtn) ? (
             <Button
               onPress={() => this._confirmLocation() }
-              title='Confirm your location'
+              title='Potwierdź swoją lokalizacje'
               color={Colors.tintColor}
             />
           ) : (null) }
           {(this.state.removeYourLocationBtn) ? (
             <Button
               onPress={() => this._removeLocation() }
-              title='Remove your location'
+              title='Usuń swoją lokalizacje'
               color={'red'}
             />
           ) : (null) }
-
-
-
-
-
 
         </ScrollView>
       </View>
